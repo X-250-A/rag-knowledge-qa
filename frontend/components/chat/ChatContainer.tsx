@@ -1,0 +1,110 @@
+"use client";
+
+import { useChat } from "@/hooks/useChat";
+import MessageBubble from "@/components/chat/MessageBubble";
+import StreamingText from "@/components/chat/StreamingText";
+import CitationCard from "@/components/chat/CitationCard";
+import ChatInput from "@/components/chat/ChatInput";
+import { useEffect, useRef } from "react";
+
+interface Props {
+    conversationId: number | null;
+    onConversationCreated?: (conversationId: number) => void;
+}
+
+export default function ChatContainer({ conversationId, onConversationCreated }: Props) {
+    const { messages, sources, streaming, sending, sendMessage, loadMessages, reset } = useChat();
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (conversationId) {
+            loadMessages(conversationId);
+        } else {
+            reset();
+        }
+    }, [conversationId, loadMessages, reset]);
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages, streaming]);
+
+    const handleSend = async (text: string) => {
+        const returnedId = await sendMessage(text, conversationId);
+        if (!conversationId && returnedId && onConversationCreated) {
+            onConversationCreated(returnedId);
+        }
+    };
+
+    return (
+        <div className="flex flex-col h-full max-w-4xl mx-auto w-full">
+            {/* 消息列表 */}
+            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+                {messages.length === 0 && !streaming && (
+                    <EmptyState />
+                )}
+
+                {messages.map((msg, i) => (
+                    <div
+                        key={msg.id}
+                        className="animate-fade-in-up"
+                        style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
+                    >
+                        <MessageBubble message={msg} />
+                    </div>
+                ))}
+
+                {/* 检索引用（流式输出期间展示当前引用的文档来源） */}
+                {sources.length > 0 && streaming && (
+                    <div className="flex justify-start">
+                        <div className="max-w-[80%] w-full rounded-2xl rounded-tl-md px-4 py-3 bg-amber-50 border border-amber-100">
+                            <div className="text-xs text-amber-500 font-medium mb-2">
+                                📎 参考了 {sources.length} 个文档片段
+                            </div>
+                            <div className="space-y-1.5">
+                                {sources.map((c, i) => (
+                                    <CitationCard key={i} citation={c} index={i} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {streaming && (
+                    <div className="flex justify-start">
+                        <div className="max-w-[80%] rounded-2xl rounded-tl-md px-5 py-3.5 bg-white border border-orange-100 shadow-sm shadow-orange-50">
+                            <StreamingText text={streaming} />
+                        </div>
+                    </div>
+                )}
+
+                <div ref={bottomRef} />
+            </div>
+
+            {/* 输入框 */}
+            <div className="border-t border-stone-100 bg-white/80 backdrop-blur-md px-4 py-3">
+                <ChatInput onSend={handleSend} disabled={sending} />
+            </div>
+        </div>
+    );
+}
+
+function EmptyState() {
+    return (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="text-6xl mb-6 opacity-80">📚</div>
+            <h2 className="text-xl font-semibold text-stone-700 mb-2">基于知识库提问</h2>
+            <p className="text-sm text-stone-400 max-w-sm leading-relaxed">
+                先在「文档管理」上传你的文档，
+                <br />
+                然后在这里提问，AI 会引用知识库内容作答。
+            </p>
+            <div className="flex flex-wrap gap-2 mt-6 justify-center">
+                {["文档里讲了什么", "总结一下核心观点", "对比两个概念"].map((hint) => (
+                    <span key={hint} className="text-xs text-stone-400 bg-stone-100 rounded-full px-3 py-1.5">
+                        {hint}
+                    </span>
+                ))}
+            </div>
+        </div>
+    );
+}

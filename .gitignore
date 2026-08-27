@@ -1,0 +1,39 @@
+# ========== Python ==========
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# ========== 环境变量（含密钥，绝不入库） ==========
+.env
+
+# ========== 数据库 / 向量库数据（本地生成，不提交） ==========
+*.db
+*.sqlite
+*.sqlite3
+chroma_data/
+chroma_db/
+backend/chroma_db/
+
+# ========== 上传文件（运行时数据，不提交） ==========
+uploads/
+
+# ========== 测试 / 构建产物 ==========
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.log
+
+# ========== IDE ==========
+.idea/
+.vscode/
+
+# ========== 前端（Next.js） ==========
+node_modules/
+.next/
+out/
+
+# ========== 本地模型缓存（体积大，按需下载） ==========
+models/

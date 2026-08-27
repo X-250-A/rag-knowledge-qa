@@ -1,0 +1,97 @@
+[project]
+name = "rag-knowledge-qa"
+version = "0.1.0"
+description = "RAG 知识库问答平台：手写 RAG 管线（分块→BGE嵌入→ChromaDB→BM25混合→Reranker重排→评估）"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # ---- Web 框架 ----
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",        # ASGI 服务器；[standard] 含 websockets/watchfiles 等
+    "python-multipart>=0.0.9",        # FastAPI 文件上传（multipart/form-data）必需
+    "sse-starlette>=2.1",             # SSE 流式问答（也可手写 StreamingResponse，此包为省事）
+
+    # ---- 配置 / 认证 ----
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",         # 读 .env 环境变量（Settings 类）
+    "pyjwt>=2.8",                     # JWT 签发/校验（FastAPI 官方现推荐 PyJWT，python-jose 已停维护）
+    "bcrypt>=4.0",                    # 密码哈希（passlib 已过时停更，官方建议直接用 bcrypt）
+
+    # ---- 数据库（元数据） ----
+    "sqlalchemy>=2.0.30",             # 2.0 async 风格
+    "aiosqlite>=0.20",
+
+    # ---- RAG 核心 ----
+    "torch>=2.13",                    # GPU 计算库（从 cu130 源装，见下方 [tool.uv.sources]）
+    "chromadb>=0.5",                  # 向量库（纯 Python 嵌入式；注意新版是 Client API 风格）
+    "sentence-transformers>=3.0",     # 本地 bge-m3 嵌入 + CrossEncoder 加载 BGE-Reranker 重排
+    "rank-bm25>=0.2.2",               # BM25 关键词检索（混合检索第二路）
+    "jieba>=0.42",                    # BM25 中文分词——rank_bm25 默认按空格分词，中文必须先用 jieba 切
+    "langgraph>=0.2",                 # Agentic RAG：检索质量差时改写查询重试的编排
+
+    # ---- LLM ----
+    "openai>=1.40",                   # DeepSeek API（OpenAI 兼容协议，直接复用）
+
+    # ---- 文档解析 ----
+    "pymupdf>=1.24",                  # PDF 解析（中文支持好；import 名是 fitz）
+    "python-docx>=1.1",               # Word 解析
+
+    # ---- 异步 HTTP（SSE 消费 / 测试客户端） ----
+    "httpx>=0.27",
+]
+
+# 开发依赖组（PEP 735 dependency-groups，uv sync 默认自动安装 dev 组）
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",           # async 测试（asyncio_mode=auto 见下方配置）
+    "ruff>=0.5",                      # 代码规范（PyCharm 有原生集成）
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]                     # 行宽交给 formatter，不交给 lint
+
+# torch 专用源：RTX 50 系显卡必须 cu130 版（默认 PyPI 的 cu12x 版会
+# access violation 崩溃）。explicit=true 表示该源只服务显式指定的包。
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu130", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+# ============================================================
+# 安装方式（推荐：uv 一条命令，全自动）：
+#
+#   uv sync
+#
+# 它会：读取 pyproject.toml → 用项目自带 .venv → torch 自动从
+# cu130 源装（GPU 版）→ 其余依赖从 PyPI 装 → 生成 uv.lock 锁定版本。
+#
+# 注意：不要用 PyCharm 默认的 "安装项目依赖" 按钮（它走 pip，
+# 不认 [tool.uv.sources]，会把 torch 装成 cu12x 崩溃版）。PyCharm
+# 里请用 uv 方式（Terminal 面板跑 uv sync，或设置解释器时选 uv）。
+#
+# bge-m3 模型权重约 2.3GB，首次运行自动下载到 ~/.cache/huggingface。
+# 国内网络必须先挂镜像再跑：
+#   export HF_ENDPOINT=https://hf-mirror.com
+# ============================================================

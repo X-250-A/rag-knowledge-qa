@@ -1,0 +1,56 @@
+# crud 统一出口：以后 from backend.app.crud import xxx 直接用
+# ---- user ----
+# ---- conversation ----
+from backend.app.crud.conversation import (
+    create_conversation,
+    find_conversation_by_user_id,
+    find_conversation_by_conversation_id,
+    delete_conversation,
+    delete_all_conversations,
+)
+# ---- document ----
+from backend.app.crud.document import (
+    create_document,
+    get_document,
+    get_documents_list,
+    update_document,
+    update_document_status,
+    delete_document,
+    delete_documents_list,
+)
+# ---- messages ----
+from backend.app.crud.messages import (
+    save_message,
+    get_all_messages,
+    delete_all_messages,
+)
+from backend.app.crud.user import (
+    find_user_by_id,
+    find_user_by_username,
+    create_user,
+    verify_user,
+    get_current_user,
+)
+
+from backend.app.crud.chunk import (
+    create_chunk,
+    get_chunk_by_document_id,
+    delete_chunk_by_document_id
+)
+
+__all__ = [
+    # user
+    "find_user_by_id", "find_user_by_username", "create_user", "verify_user", "get_current_user",
+    # document
+    "create_document", "get_document", "get_documents_list", "update_document",
+    "update_document_status", "delete_document", "delete_documents_list",
+    # conversation
+    "create_conversation", "find_conversation_by_user_id",
+    "find_conversation_by_conversation_id", "delete_conversation", "delete_all_conversations",
+    # messages
+    "save_message", "get_all_messages", "delete_all_messages",
+    # chunk
+    "create_chunk",
+    "get_chunk_by_document_id",
+    "delete_chunk_by_document_id",
+]
