@@ -18,10 +18,20 @@ async def create_document(db: AsyncSession, user_id: int, file_name: str, file_t
     return document
 
 # 查询单个文件
-async def get_document(db: AsyncSession, document_id: int):
+async def get_document(db: AsyncSession, document_id: int, user_id : int | None = None):
     query = select(Documents).where(Documents.id == document_id)
+    if user_id is not None:
+        query = query.where(Documents.user_id == user_id)
     result = await db.execute(query)
     return result.scalar_one_or_none()
+
+async def find_document_by_file_name(db: AsyncSession, file_name: str, user_id : int | None = None):
+    query = select(Documents).where(Documents.file_name == file_name)
+    if user_id is not None:
+        query = query.where(Documents.user_id == user_id)
+    result = await db.execute(query)
+    return result.scalar_one_or_none()
+
 
 
 # 查询当前用户的文件列表

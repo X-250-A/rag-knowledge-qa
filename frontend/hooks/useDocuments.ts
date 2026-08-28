@@ -26,11 +26,14 @@ export function useDocuments() {
         }
     }, []);
 
-    const upload = useCallback(async (file: File) => {
+    const upload = useCallback(async (files: File[]) => {
+        if (!files.length) return;
         setUploading(true);
         setError("");
         try {
-            await uploadDocument(file);
+            for (const file of files) {
+                await uploadDocument(file);
+            }
             await load();
         } catch (err) {
             setError(err instanceof Error ? err.message : "上传失败");
@@ -43,9 +46,12 @@ export function useDocuments() {
         setError("");
         try {
             await deleteDocument(documentId);
-            await load();
         } catch (err) {
             setError(err instanceof Error ? err.message : "删除失败");
+        } finally {
+            // 无论成功还是失败都刷新列表：
+            // 若后端实际已删除但返回报错，重拉列表即可移除残留行，避免用户误判
+            await load();
         }
     }, [load]);
 

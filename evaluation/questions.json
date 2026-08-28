@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "topic": "数据结构与算法",
+    "source_docs": [
+      "01_数组与链表.md",
+      "02_栈队列哈希表.md",
+      "03_树与二叉树.md",
+      "04_排序与查找.md"
+    ],
+    "top_k_default": 5,
+    "eval_user": "9",
+    "note": "chunk_seq 由 chunker.py 的 chunk_text(text,300,50) 零基索引得到，已用 evaluation/scripts/chunk_preview.py 核对，与入库时一致。"
+  },
+  "questions": [
+    { "id": "ds01-01", "question": "数组为什么能在 O(1) 时间内随机访问任意元素？", "document_name": "01_数组与链表.md", "chunk_seq": 1, "category": "fact", "reference_answer": "数组元素在内存中连续存放，通过下标即可直接计算并定位到任意元素，因此随机访问的时间复杂度是 O(1)。" },
+    { "id": "ds01-02", "question": "在数组中间插入或删除一个元素的时间复杂度是多少？", "document_name": "01_数组与链表.md", "chunk_seq": 2, "category": "fact", "reference_answer": "中间插入或删除需要把后面的元素整体前移或后移，平均时间复杂度为 O(n)；只有在数组末尾追加或删除元素才是 O(1)。" },
+    { "id": "ds01-03", "question": "动态数组扩容时，为什么均摊下来每次追加元素仍是 O(1)？", "document_name": "01_数组与链表.md", "chunk_seq": 3, "category": "why", "reference_answer": "容量满时申请更大的内存并复制原有元素，通常扩容为原来的两倍。因为扩容并不频繁发生，均摊下来每次追加仍是 O(1)。" },
+    { "id": "ds01-04", "question": "为什么链表的随机访问时间复杂度是 O(n)？", "document_name": "01_数组与链表.md", "chunk_seq": 4, "category": "why", "reference_answer": "链表没有下标，内存上不要求连续，靠指针维护逻辑顺序，访问某个位置的元素需要从头逐个遍历，所以随机访问是 O(n)。" },
+    { "id": "ds01-05", "question": "在链表的头部插入一个节点的时间复杂度是多少？", "document_name": "01_数组与链表.md", "chunk_seq": 5, "category": "fact", "reference_answer": "只需要改动相邻节点的指针即可，不需要移动其他元素，因此在已定位到目标位置的前提下，插入和删除的时间复杂度是 O(1)。" },
+    { "id": "ds01-06", "question": "数组和链表各自有什么优缺点？", "document_name": "01_数组与链表.md", "chunk_seq": 7, "category": "how", "reference_answer": "数组随机访问快、缓存友好，但插入删除慢且大小固定；链表插入删除快、可动态扩容，但随机访问慢、内存开销大。二者对立互补。" },
+
+    { "id": "ds02-01", "question": "栈的入栈、出栈和查看栈顶操作的时间复杂度分别是多少？", "document_name": "02_栈队列哈希表.md", "chunk_seq": 1, "category": "fact", "reference_answer": "入栈 push、出栈 pop、查看栈顶 peek 都只操作栈顶，三种操作的时间复杂度都是 O(1)。" },
+    { "id": "ds02-02", "question": "括号匹配算法是如何用栈实现的？", "document_name": "02_栈队列哈希表.md", "chunk_seq": 2, "category": "how", "reference_answer": "遇到左括号就入栈，遇到右括号就弹出一个左括号进行匹配，最后栈为空则表示括号匹配成功。" },
+    { "id": "ds02-03", "question": "为什么要使用循环队列？", "document_name": "02_栈队列哈希表.md", "chunk_seq": 4, "category": "why", "reference_answer": "普通队列出队会让队头指针后移，造成数组前部空间浪费；循环队列用取模运算让队尾绕回数组开头，从而复用已出队的空间。" },
+    { "id": "ds02-04", "question": "什么是哈希冲突？常用的解决方法有哪些？", "document_name": "02_栈队列哈希表.md", "chunk_seq": 6, "category": "fact", "reference_answer": "两个不同的键经散列函数映射到同一个下标即发生哈希冲突。常用解决方法是链地址法（每个槽挂一条链表）和开放寻址法（线性探测下一个空位）。" },
+    { "id": "ds02-05", "question": "哈希表负载因子过高会怎样？超过阈值后如何处理？", "document_name": "02_栈队列哈希表.md", "chunk_seq": 7, "category": "how", "reference_answer": "负载因子过高会导致冲突频繁、性能下降，当超过阈值（通常 0.75）时哈希表扩容，把所有键重新散列到更大的数组（rehash），均摊下来单次插入仍是 O(1)。" },
+    { "id": "ds02-06", "question": "哈希表在理想情况下插入、查找、删除的平均时间复杂度是多少？", "document_name": "02_栈队列哈希表.md", "chunk_seq": 5, "category": "fact", "reference_answer": "哈希表通过散列函数把键映射到数组下标，理想情况下插入、查找、删除的平均时间复杂度都是 O(1)，是牺牲少量空间换取极快查询速度。" },
+
+    { "id": "ds03-01", "question": "深度为 h 的二叉树最多有多少个节点？", "document_name": "03_树与二叉树.md", "chunk_seq": 2, "category": "fact", "reference_answer": "深度为 h 的二叉树第 h 层最多有 2 的 h-1 次方个节点，整棵树节点总数最多为 2 的 h 次方减 1。" },
+    { "id": "ds03-02", "question": "什么是完全二叉树？", "document_name": "03_树与二叉树.md", "chunk_seq": 3, "category": "fact", "reference_answer": "完全二叉树指除了最后一层外每一层都被填满，且最后一层的节点都靠左排列的二叉树。二叉堆和优先队列常用它实现。" },
+    { "id": "ds03-03", "question": "二叉搜索树在什么情况下会退化成链表？", "document_name": "03_树与二叉树.md", "chunk_seq": 4, "category": "why", "reference_answer": "如果按升序的顺序插入，二叉搜索树会退化成链表，查找、插入、删除复杂度从 O(log n) 退化为 O(n)。" },
+    { "id": "ds03-04", "question": "对二叉搜索树做中序遍历会得到什么结果？", "document_name": "03_树与二叉树.md", "chunk_seq": 5, "category": "fact", "reference_answer": "中序遍历（左根右）一棵二叉搜索树可以得到升序序列。" },
+    { "id": "ds03-05", "question": "对二叉树做层序遍历需要借助什么数据结构？", "document_name": "03_树与二叉树.md", "chunk_seq": 5, "category": "fact", "reference_answer": "层序遍历按层从上到下、从左到右访问节点，需要用队列辅助实现。" },
+    { "id": "ds03-06", "question": "AVL 树的平衡条件是什么？", "document_name": "03_树与二叉树.md", "chunk_seq": 6, "category": "fact", "reference_answer": "AVL 树要求任意节点的左右子树高度差绝对值不超过 1，插入删除后通过旋转保持平衡，查找复杂度严格保持 O(log n)。" },
+
+    { "id": "ds04-01", "question": "冒泡排序的时间复杂度和稳定性如何？", "document_name": "04_排序与查找.md", "chunk_seq": 1, "category": "fact", "reference_answer": "冒泡排序平均和最坏时间复杂度都是 O(n 的平方)，共需 n-1 轮，且是稳定的排序算法。" },
+    { "id": "ds04-02", "question": "选择排序是稳定的排序算法吗？", "document_name": "04_排序与查找.md", "chunk_seq": 2, "category": "fact", "reference_answer": "选择排序不稳定。每轮从剩余元素中选出最小值放到已排序部分末尾，每轮只交换一次，因此交换次数比冒泡少。" },
+    { "id": "ds04-03", "question": "插入排序最适用于什么场景？", "document_name": "04_排序与查找.md", "chunk_seq": 3, "category": "why", "reference_answer": "插入排序平均和最坏是 O(n 的平方)，但数据量很小或接近有序时非常高效（接近有序时最坏只有 O(n)），且稳定。" },
+    { "id": "ds04-04", "question": "快速排序的平均和最坏时间复杂度分别是多少？", "document_name": "04_排序与查找.md", "chunk_seq": 4, "category": "fact", "reference_answer": "快速排序平均时间复杂度是 O(n log n)，最坏（每次选取极值作基准）是 O(n 的平方)，是不稳定的算法，但通常是最快的通用排序。" },
+    { "id": "ds04-05", "question": "归并排序的时间复杂度和额外空间复杂度是多少？", "document_name": "04_排序与查找.md", "chunk_seq": 5, "category": "fact", "reference_answer": "归并排序时间复杂度和最坏都是 O(n log n)，是稳定的，但需要 O(n) 的额外空间来合并。" },
+    { "id": "ds04-06", "question": "二分查找的前提条件和时间复杂度是什么？", "document_name": "04_排序与查找.md", "chunk_seq": 8, "category": "fact", "reference_answer": "二分查找针对已排好序的数组，每次取中间元素比较排除一半区间，时间复杂度是 O(log n)；前提是数据有序且支持随机访问。" }
+  ]
+}

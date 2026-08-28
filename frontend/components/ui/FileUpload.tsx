@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 interface Props {
-    onFileSelect: (file: File) => void;
+    onFileSelect: (files: File[]) => void;
     accept?: string;
     uploading?: boolean;
 }
@@ -12,13 +12,16 @@ const ACCEPT = ".pdf,.md,.docx";
 
 export default function FileUpload({ onFileSelect, accept = ACCEPT, uploading = false }: Props) {
     const inputRef = useRef<HTMLInputElement>(null);
-    const [fileName, setFileName] = useState("");
+    const [fileNames, setFileNames] = useState<string[]>([]);
     const [dragOver, setDragOver] = useState(false);
 
-    const handleFile = (file: File | undefined | null) => {
-        if (!file) return;
-        setFileName(file.name);
-        onFileSelect(file);
+    const handleFiles = (files: FileList | File[] | null) => {
+        const list = files ? Array.from(files) : [];
+        if (list.length === 0) return;
+        setFileNames(list.map((f) => f.name));
+        // 清空 input.value，允许重复选择同一文件
+        if (inputRef.current) inputRef.current.value = "";
+        onFileSelect(list);
     };
 
     return (
@@ -32,7 +35,7 @@ export default function FileUpload({ onFileSelect, accept = ACCEPT, uploading = 
             onDrop={(e) => {
                 e.preventDefault();
                 setDragOver(false);
-                handleFile(e.dataTransfer.files?.[0]);
+                handleFiles(e.dataTransfer.files);
             }}
             className={`cursor-pointer rounded-2xl border-2 border-dashed px-6 py-10 text-center transition-all duration-200
                 ${dragOver
@@ -43,16 +46,26 @@ export default function FileUpload({ onFileSelect, accept = ACCEPT, uploading = 
                 ref={inputRef}
                 type="file"
                 accept={accept}
+                multiple
                 className="hidden"
-                onChange={(e) => handleFile(e.target.files?.[0])}
+                onChange={(e) => handleFiles(e.target.files)}
             />
             <div className="text-4xl mb-3">📄</div>
             <p className="text-sm font-medium text-stone-600">
-                {fileName || "点击选择或拖拽文档到此处"}
+                {fileNames.length
+                    ? `已选 ${fileNames.length} 个文件`
+                    : "点击选择或拖拽文档到此处（可多选）"}
             </p>
+            {fileNames.length > 0 && (
+                <p className="text-xs text-stone-400 mt-1.5 truncate px-4">
+                    {fileNames.join("、")}
+                </p>
+            )}
             <p className="text-xs text-stone-400 mt-1.5">支持 .pdf / .docx / .md</p>
             {uploading && (
-                <p className="text-xs text-orange-500 mt-3 animate-pulse">上传解析中，请稍候...</p>
+                <p className="text-xs text-orange-500 mt-3 animate-pulse">
+                    上传解析中，请稍候...
+                </p>
             )}
         </div>
     );

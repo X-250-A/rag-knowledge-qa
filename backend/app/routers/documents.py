@@ -1,4 +1,5 @@
 from pathlib import Path
+import logging
 
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +12,7 @@ from backend.app.crud import (
     get_document,
     get_current_user,
     update_document_status,
+    find_document_by_file_name,
 )
 from backend.app.db import get_db
 from backend.app.models import User
@@ -22,6 +24,7 @@ from backend.app.services import (
 )
 
 router = APIRouter(prefix="/documents", tags=["documents"])
+logger = logging.getLogger(__name__)
 
 UPLOAD_DIR = "uploads"
 
@@ -34,6 +37,10 @@ async def upload_documents(
 ):
     Path(UPLOAD_DIR).mkdir(exist_ok=True)
     file_path = Path(UPLOAD_DIR) / file.filename
+    existing = await find_document_by_file_name(db=db, file_name=file.filename, user_id=current_user.id)
+    if existing:
+        raise HTTPException(status_code=400, detail="Document already exists")
+
     with open(file_path, "wb") as f:
         f.write(await file.read())
 
@@ -72,14 +79,28 @@ async def delete_some_document(
     db : AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    documents = await get_document(db=db, document_id=document_id)
+    documents = await get_document(db=db, document_id=document_id, user_id=current_user.id)
     if documents is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    file_name = documents.file_name
+    file_path = Path(UPLOAD_DIR) / file_name
+
+    # 清除数据库数据
     await delete_document(document_id=document_id, db=db)
 
-    client = initializing_client()
-    delete_collection(client=client, document_id=document_id, user_id=current_user.id)
+    # 清除向量库数据
+    try:
+        client = initializing_client()
+        delete_collection(client=client, document_id=document_id, user_id=current_user.id)
+    except Exception as e:
+        logger.error(f"清除向量库失败: {e}")
 
-    (Path(UPLOAD_DIR) / documents.file_name).unlink(missing_ok=True)
+    # 清除磁盘文件
+    try:
+        file_path.unlink(missing_ok=True)
+        if file_path.exists():
+            logger.warning(f"磁盘文件删除后仍存在，可能被占用: {file_path}")
+    except Exception as e:
+        logger.error(f"删除磁盘文件失败: {file_path} -> {e}")
 
-    return documents
+    return {"message": f"Document {file_name} deleted"}

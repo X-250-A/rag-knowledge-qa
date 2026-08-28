@@ -17,6 +17,7 @@ from backend.app.crud.document import (
     update_document_status,
     delete_document,
     delete_documents_list,
+    find_document_by_file_name,
 )
 # ---- messages ----
 from backend.app.crud.messages import (
@@ -44,6 +45,7 @@ __all__ = [
     # document
     "create_document", "get_document", "get_documents_list", "update_document",
     "update_document_status", "delete_document", "delete_documents_list",
+    "find_document_by_file_name",
     # conversation
     "create_conversation", "find_conversation_by_user_id",
     "find_conversation_by_conversation_id", "delete_conversation", "delete_all_conversations",

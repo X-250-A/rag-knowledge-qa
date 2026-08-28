@@ -3,7 +3,7 @@
 import FileUpload from "@/components/ui/FileUpload";
 
 interface Props {
-    onUpload: (file: File) => void;
+    onUpload: (files: File[]) => void;
     uploading: boolean;
     error?: string;
 }

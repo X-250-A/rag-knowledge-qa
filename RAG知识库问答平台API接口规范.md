@@ -1,7 +1,7 @@
 # RAG 知识库问答平台 API 接口规范
 
 > 项目名：rag-knowledge-qa
-> 文档版本：v0.1.0（骨架阶段）
+> 文档版本：v0.2.0（MVP 阶段，2026-08-28 按实际代码对齐更新）
 > 配套文档：《RAG知识库问答平台架构设计.md》
 
 ---
@@ -122,15 +122,18 @@ Authorization: Bearer <access_token>
 }
 ```
 
-### 2.5 SSE 事件类型（问答流）
+### 2.5 SSE 事件类型（问答流，MVP 实际实现）
 
-| event | data | 说明 |
+> MVP 采用单通道 `data:` 事件（不带 `event:` 命名），每帧为一个 JSON，以 `type` 字段区分类型：
+
+| type | data 示例 | 说明 |
 |---|---|---|
-| `retrieval` | `{"doc_count":2,"chunk_count":5,"elapsed_ms":180}` | 检索完成，前端可展示检索状态 |
-| `citation` | `[Citation,...]` | 本次回答的引用列表 |
-| `answer` | `{"text":"……"}` | 增量文本块，前端按块拼接 |
-| `done` | `{"message_id":1}` | 流结束 |
-| `error` | `{"code":50000,"message":"……"}` | 流中断错误 |
+| `retrieval` | `{"type":"retrieval","sources":[SourceChunk,...]}` | 检索完成，携带引用来源数组（前端渲染来源卡片） |
+| `delta` | `{"type":"delta","text":"……"}` | 增量文本块，前端按块拼接 |
+| `done` | `{"type":"done","conversation_id":1}` | 流结束 |
+| `error` | `{"type":"error","details":"……"}` | 流中断错误 |
+
+规划中的命名事件（`event: retrieval` / `event: citation` 分离下发）为深化方向四的内容，当前未实现。
 
 ---
 
@@ -223,50 +226,44 @@ Authorization: Bearer <access_token>
 
 ### 3.3 问答模块（核心）
 
-#### `POST /api/chat` — 发起问答（SSE 流式）
+#### `POST /api/chat` — 发起问答（SSE 流式）✅ 已实现（MVP 为纯向量检索 + 意图识别）
 
-请求：
+请求（实际实现字段）：
 ```json
 {
   "conversation_id": 1,
   "question": "二叉树有哪几种遍历方式？",
-  "top_k": 5,
-  "use_hybrid": true
+  "document_ids": null
 }
 ```
 
 - `conversation_id`：可空；为空则服务端新建会话
-- `top_k`：进 prompt 的块数，默认 5
-- `use_hybrid`：是否启用混合检索（向量+BM25+重排），默认 true
+- `document_ids`：指定在哪些文档范围内检索，`null` = 全库检索。**已知缺口：该参数当前仅进 schema，检索层未消费（深化方向二接上）**
 
-响应：`Content-Type: text/event-stream`，按序下发事件：
-
-```
-event: retrieval
-data: {"doc_count":2,"chunk_count":5,"elapsed_ms":180}
-
-event: citation
-data: [{"doc_id":1,"filename":"数据结构期末复习.pdf","chunk_seq":3,"snippet":"……"}]
-
-event: answer
-data: {"text":"根据你的资料，二叉树遍历分三种："}
-
-event: answer
-data: {"text":"前序、中序、后序[1]。"}
-
-event: done
-data: {"message_id":1,"conversation_id":1}
-```
-
-**问答内部流程**（服务端）：
+响应：`Content-Type: text/event-stream`，MVP 实际下发序列：
 
 ```
-question → embedding → 向量检索 top-20
-         + BM25 检索 top-20（use_hybrid=true 时）
-         → 合并去重 → Reranker 重排 → top-k
-         → prompt_builder 组装（带 [n] 编号引用）
-         → DeepSeek 生成（流式）→ 解析 [n] 引用 → 流式下发
+data: {"type":"retrieval","sources":[{"document_id":1,"document_name":"数据结构期末复习.pdf","chunk_seq":3,"content":"……","score":0.87}]}
+
+data: {"type":"delta","text":"根据你的资料，二叉树遍历分三种："}
+
+data: {"type":"delta","text":"前序、中序、后序。"}
+
+data: {"type":"done","conversation_id":1}
 ```
+
+**问答内部流程**（MVP 实际实现，服务端）：
+
+```
+question → 存 user 消息 → LLM 意图四分类（temperature=0 + json_object，失败回退关键词）
+         ├─ rag_query: embedding → ChromaDB 向量检索 top-5（按 user_id 过滤）
+         │    → prompt_builder 组装 → DeepSeek 流式生成 → retrieval 事件 → delta 流 → done
+         ├─ chitchat: 直接用会话历史闲聊（不检索）
+         ├─ document_management: 引导去文档管理页
+         └─ out_of_scope: 拒答
+```
+
+规划中的混合检索流程（向量 top-20 + BM25 top-20 → 合并 → Reranker → top-k）为深化方向二内容，未实现。
 
 **前端消费示例**（fetch + ReadableStream）：
 
@@ -274,14 +271,15 @@ question → embedding → 向量检索 top-20
 const res = await fetch('/api/chat', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-  body: JSON.stringify({ question, use_hybrid: true }),
+  body: JSON.stringify({ question }),
 });
 const reader = res.body.getReader();
 const decoder = new TextDecoder();
 while (true) {
   const { done, value } = await reader.read();
   if (done) break;
-  parseSSE(decoder.decode(value)); // 按 event 分发：retrieval/citation/answer/done
+  // 每帧为 JSON，按 data.type 分发：retrieval/delta/done/error
+  handleFrame(JSON.parse(decoder.decode(value)));
 }
 ```
 
@@ -295,7 +293,9 @@ while (true) {
 
 响应 200：`{ "items": [Message,...] }`（含 citations）
 
-### 3.4 评估模块
+### 3.4 评估模块 ⬜ 未实现（深化方向一落地）
+
+> 以下为规划接口，代码中 evaluator.py 当前为 0 字节空壳，无对应路由。
 
 #### `POST /api/evaluation/run` — 运行评估集
 
@@ -379,3 +379,18 @@ while (true) {
 ---
 
 *文档完。与架构设计文档配套，实现时以实际接口为准，有出入先改本文档再改代码。*
+
+---
+
+## 附录：MVP 实现状态总览（2026-08-28 对照代码核实）
+
+| 模块 | 文档定义 | 实现状态 |
+|---|---|---|
+| 认证（register/login/me + JWT） | 3.1 | ✅ 已实现 |
+| 文档上传/列表/详情/删除（建库管线） | 3.2 | ✅ 已实现 |
+| 问答 SSE（意图识别 + 纯向量检索 + 流式生成） | 3.3 | ✅ 已实现（document_ids 未接入检索） |
+| 会话列表/消息历史 | 3.3 | ✅ 已实现（conversations 路由） |
+| 评估模块 | 3.4 | ⬜ 未实现（evaluator.py 空壳） |
+| 健康检查 | 3.5 | ✅ 已实现 |
+| 响应统一封装 {code,message,data} | 1.3 | ⚠️ 部分实现：chat 走 SSE 不套壳符合设计，其余路由返回裸 JSON，后续统一 |
+| SSE 命名事件（event: xxx） | 2.5 | ⚠️ 实际为单通道 data JSON（type 字段区分） |
