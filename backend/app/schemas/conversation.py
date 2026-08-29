@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class ConversationOut(BaseModel):
     """会话列表里的一条"""
+
     id: int
     title: str
     created_at: datetime
@@ -14,6 +15,7 @@ class ConversationOut(BaseModel):
 
 class MessageOut(BaseModel):
     """会话里的一条消息"""
+
     id: int
     role: str
     content: str

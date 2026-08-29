@@ -1,29 +1,38 @@
 # schemas 统一出口：from backend.app.schemas import xxx
 # ---- auth ----
 from backend.app.schemas.auth import (
-    RegisterRequest,
-    RegisterResponse,
     LoginRequest,
     LoginResponse,
+    RegisterRequest,
+    RegisterResponse,
 )
+
 # ---- chat ----
 from backend.app.schemas.chat import (
     ChatRequest,
-    SourceChunk,
     ChatResponse,
     ChatStreamDelta,
+    SourceChunk,
 )
+
 # ---- document ----
 from backend.app.schemas.document import (
-    DocumentOut,
     DocumentListOut,
+    DocumentOut,
 )
 
 __all__ = [
     # auth
-    "RegisterRequest", "RegisterResponse", "LoginRequest", "LoginResponse",
+    "RegisterRequest",
+    "RegisterResponse",
+    "LoginRequest",
+    "LoginResponse",
     # document
-    "DocumentOut", "DocumentListOut",
+    "DocumentOut",
+    "DocumentListOut",
     # chat
-    "ChatRequest", "SourceChunk", "ChatResponse", "ChatStreamDelta",
+    "ChatRequest",
+    "SourceChunk",
+    "ChatResponse",
+    "ChatStreamDelta",
 ]
