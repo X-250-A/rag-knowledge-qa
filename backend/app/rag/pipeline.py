@@ -1,16 +1,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.services import (
-    initializing_client,
-    add_collection,
-    query_collection,
-    get_embedding,
-    chunk_text,
-)
-
 from backend.app.crud import (
     create_chunk,
     update_document_status,
+)
+from backend.app.services import (
+    add_collection,
+    chunk_text,
+    get_embedding,
+    initializing_client,
+    query_collection,
 )
 
 
@@ -26,22 +25,21 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
                 seq_no=seq_no,
                 char_count=len(chunk),
                 content=chunk,
-                metadata={
-                    "strategy": "paragraph+sentence",
-                    "chunk_size": 300,
-                    "overlap": 50
-                }
+                metadata={"strategy": "paragraph+sentence", "chunk_size": 300, "overlap": 50},
             )
 
         # 向量化并入库
         await update_document_status(db=db, document_id=document_id, status="embedding")
         embedding = get_embedding(chunks)
         client = initializing_client()
-        add_collection(client, chunks, embedding,
-                       document_id=document_id,
-                       document_name=document_name,
-                       user_id=user_id
-                       )
+        add_collection(
+            client,
+            chunks,
+            embedding,
+            document_id=document_id,
+            document_name=document_name,
+            user_id=user_id,
+        )
 
         await update_document_status(
             db=db,
@@ -61,8 +59,3 @@ def query(question: str, top_k: int = 5, user_id: int | None = None):
     client = initializing_client()
     results = query_collection(client, query_vector, top_k, user_id=user_id)
     return results
-
-
-
-
-

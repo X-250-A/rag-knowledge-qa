@@ -38,3 +38,6 @@ out/
 # ========== 本地模型缓存（体积大，按需下载） ==========
 models/
 *.tsbuildinfo
+
+# pre-commit 测试残留缓存
+.pcache/

@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.10            # 建议写死一个版本，别用浮动标签
+    hooks:
+      - id: ruff             # 跑 ruff check，自动修能修的
+        args: [--fix]
+      - id: ruff-format      # 跑 ruff format，统一格式
+
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace    # 去行尾空格
+      - id: end-of-file-fixer      # 文件末尾补换行（就是 W292 那个）
+      - id: check-yaml             # 校验 yaml 语法
+      - id: check-merge-conflict   # 防止提交未解决的冲突标记

@@ -5,9 +5,14 @@ def initializing_client():
     return chromadb.PersistentClient(path="./chroma_db")
 
 
-def add_collection(client, chunks: list, embedding: list,
-                   document_id: int = 0, document_name: str = "",
-                   user_id: int = 0):
+def add_collection(
+    client,
+    chunks: list,
+    embedding: list,
+    document_id: int = 0,
+    document_name: str = "",
+    user_id: int = 0,
+):
     collection = client.get_or_create_collection("documents")
     ids = [f"{document_id}_{i}" for i in range(len(chunks))]
     metadatas = [
@@ -27,8 +32,7 @@ def add_collection(client, chunks: list, embedding: list,
     return collection
 
 
-def query_collection(client, embedding: list, top_k: int = 5,
-                     user_id: int | None = None):
+def query_collection(client, embedding: list, top_k: int = 5, user_id: int | None = None):
     collection = client.get_or_create_collection("documents")
     where = {"user_id": user_id} if user_id is not None else None
     query = collection.query(

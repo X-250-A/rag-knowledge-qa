@@ -11,10 +11,11 @@ class ConversationManager:
     def __init__(self, db: AsyncSession, user_id: int, conversation_id: int, title: str):
         self.db = db
         self.user_id = user_id
-        self.history_cache : list[dict] = []
+        self.history_cache: list[dict] = []
         self.conversation_id = conversation_id
         self.title = title
         self.state = "pending"
+
     #
 
     # 创建新会话
@@ -25,19 +26,28 @@ class ConversationManager:
 
     # 追加历史消息
     async def add_history_item(self, role: str, content: str):
-        message = await save_message(db=self.db, conversation_id=self.conversation_id, role=role, content=content)
+        message = await save_message(
+            db=self.db, conversation_id=self.conversation_id, role=role, content=content
+        )
         self.history_cache = [{"role": message.role, "content": message.content}]
         return message
 
     # 追加一条消息到会话
     async def add_message(self, role: str, content: str):
-        message = await save_message(db=self.db, conversation_id=self.conversation_id, role=role, content=content)
+        message = await save_message(
+            db=self.db, conversation_id=self.conversation_id, role=role, content=content
+        )
         self.history_cache.append({"role": message.role, "content": message.content})
         return message
 
     # 获取历史上下文
-    async def get_history_item(self, role: str, content: str, max_token: int = 10000, token_counter: Callable[[int], int] = None):
-
+    async def get_history_item(
+        self,
+        role: str,
+        content: str,
+        max_token: int = 10000,
+        token_counter: Callable[[int], int] = None,
+    ):
         # 获取并追加历史上下文
         messages = await get_all_messages(db=self.db, conversation_id=self.conversation_id)
         all_history = [{"role": message.role, "content": message.content} for message in messages]
@@ -54,15 +64,3 @@ class ConversationManager:
 
         self.history_cache = all_history
         return result
-
-
-
-
-
-
-
-
-
-
-
-

@@ -7,15 +7,17 @@ def retrieve(question: str, top_k: int = 5, user_id: int | None = None) -> list[
     results = pipeline_query(question, top_k, user_id=user_id)
 
     chunks = []
-    for i, item_id in enumerate(results['ids'][0]):
+    for i, item_id in enumerate(results["ids"][0]):
         _, seq_no = item_id.rsplit("_", 1)
-        meta = results['metadatas'][0][i]
-        chunks.append({
-            "document_id": meta['document_id'],
-            "document_name": meta['document_name'],
-            "seq_no": int(seq_no),
-            "content": results['documents'][0][i],
-            "score": round(1 / (1 + results['distances'][0][i]), 2),
-        })
+        meta = results["metadatas"][0][i]
+        chunks.append(
+            {
+                "document_id": meta["document_id"],
+                "document_name": meta["document_name"],
+                "seq_no": int(seq_no),
+                "content": results["documents"][0][i],
+                "score": round(1 / (1 + results["distances"][0][i]), 2),
+            }
+        )
 
     return chunks

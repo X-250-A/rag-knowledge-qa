@@ -1,13 +1,13 @@
 ## 今日成就：
 
 - ##### 独立完成注册 -> 登录 -> 查询的auth认证体系
-  
+
   - 包含config，.env的文件配置及config非空校验，异步会话依赖项配置，User及其相关响应模型类的撰写，CRUD数据库操作函数的撰写，JWT签发闭环流程的融入，register，login，me三大路由函数的完善。
-  
+
   - 遥想我在做我的travel-assistant项目的时候，我完成auth体系的时间至少要五六天，JWT认证还是在后续版本补足的。看来，那个项目作为学习项目确实有很大价值。至少，一些工程化细节，我不需要在MVP版本之后才能完善了，我能把诸如非空校验，JWT认证这种工程化细节融入MVP，增强代码健硕性。
 
 - ##### 在hermes（xiao mi mimo-v2.5-pro）的辅助下，完成chat，document的schemas模型。同时独立完成documents类的CRUD撰写
-  
+
   - 关于chat和documents的schemas模型部分，我确实没怎么接触过。所以我干脆让mimo来写了。
 
 ## 笔者有感：

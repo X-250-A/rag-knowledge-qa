@@ -1,21 +1,21 @@
-# -*- coding: utf-8 -*-
 """一键运行评估集，打印检索层基线报告。
 
 运行方式（在项目根目录）：
     .venv\\Scripts\\python.exe -X utf8 evaluation/run_eval.py
 """
+
 import os
 import sys
 import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-os.chdir(ROOT)   # chroma_db / .env 都用相对路径，先切到项目根
+os.chdir(ROOT)  # chroma_db / .env 都用相对路径，先切到项目根
 
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from backend.app.services.evaluator import load_questions, evaluate_retrieval
+from backend.app.services.evaluator import evaluate_retrieval, load_questions  # noqa: E402
 
 
 def main() -> None:
@@ -47,8 +47,10 @@ def main() -> None:
     if result["by_category"]:
         print("\n按类别:")
         for cat, b in result["by_category"].items():
-            print(f"  {cat:<6} n={b['total']:<2} "
-                  f"Hit@{result['top_k']}={b['hit_rate']:.2f}  MRR={b['mrr']:.3f}")
+            print(
+                f"  {cat:<6} n={b['total']:<2} "
+                f"Hit@{result['top_k']}={b['hit_rate']:.2f}  MRR={b['mrr']:.3f}"
+            )
 
     misses = [d for d in result["details"] if not d["hit"]]
     if misses:

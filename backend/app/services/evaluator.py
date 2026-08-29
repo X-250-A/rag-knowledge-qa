@@ -7,6 +7,7 @@
 
 运行入口见 evaluation/run_eval.py。
 """
+
 from __future__ import annotations
 
 import json
@@ -33,8 +34,7 @@ def _find_rank(results: list[dict], q: dict) -> int | None:
     return None
 
 
-def evaluate_retrieval(questions: list[dict], top_k: int = 5,
-                       user_id: int | None = None) -> dict:
+def evaluate_retrieval(questions: list[dict], top_k: int = 5, user_id: int | None = None) -> dict:
     """对每题跑一次检索，汇总 Hit@k / MRR，并附按类别(category)细分。"""
     # 延迟导入：retriever 的 import 链会加载 bge-m3 模型（约 2.3GB），
     # 只在真正评估时才触发，避免 import 本模块就卡住。
@@ -53,14 +53,16 @@ def evaluate_retrieval(questions: list[dict], top_k: int = 5,
         hits += int(hit)
         mrr_sum += rr
 
-        details.append({
-            "id": q["id"],
-            "question": q["question"],
-            "expected": f'{q["document_name"]}[{q["chunk_seq"]}]',
-            "rank": rank,          # None 表示未命中
-            "hit": hit,
-            "rr": rr,
-        })
+        details.append(
+            {
+                "id": q["id"],
+                "question": q["question"],
+                "expected": f"{q['document_name']}[{q['chunk_seq']}]",
+                "rank": rank,  # None 表示未命中
+                "hit": hit,
+                "rr": rr,
+            }
+        )
 
         cat = q.get("category", "other")
         bucket = per_cat.setdefault(cat, {"total": 0, "hits": 0, "mrr": 0.0})

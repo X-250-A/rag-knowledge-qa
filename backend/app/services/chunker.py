@@ -1,5 +1,3 @@
-
-
 def chunk_text(text: str, chunk_size: int, overlap: int = 50) -> list:
     paragraphs = text.split("\n\n")
 
@@ -15,7 +13,7 @@ def chunk_text(text: str, chunk_size: int, overlap: int = 50) -> list:
             for sentence in sentences:
                 if len(chunk) + len(sentence) >= chunk_size:
                     chunks.append(chunk)
-                    chunk = chunk[-overlap: ]
+                    chunk = chunk[-overlap:]
                 chunk += sentence
             if chunk:
                 chunks.append(chunk)

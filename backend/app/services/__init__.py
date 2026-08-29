@@ -6,10 +6,10 @@ from backend.app.services.parser import parse_file
 from backend.app.services.prompt_builder import PromptBuilder
 from backend.app.services.retriever import retrieve
 from backend.app.services.vector_store import (
-    initializing_client,
     add_collection,
-    query_collection,
     delete_collection,
+    initializing_client,
+    query_collection,
 )
 
 __all__ = [

@@ -1,17 +1,19 @@
 import json
 
 from app import settings
+
 from backend.app.agent.conversation import ConversationManager
-from backend.app.services import PromptBuilder, LlmClient, retrieve
+from backend.app.services import LlmClient, PromptBuilder, retrieve
 
 """RAG核心Agent"""
+
+
 class RAGAgent:
     def __init__(self):
         self.prompt_builder = PromptBuilder()
         self.llm_client = LlmClient()
 
     async def handle_message(self, user_input: str, conversation: ConversationManager):
-
         """保存该会话消息"""
         await conversation.add_message(role="user", content=user_input)
 
@@ -24,13 +26,11 @@ class RAGAgent:
             messages = self.prompt_builder.build_prompt(question=user_input, content_chunks=chunk)
             if messages is None:
                 await conversation.add_message(
-                    role="assistant",
-                    content="未找到相关文档，请先上传知识库文档。"
+                    role="assistant", content="未找到相关文档，请先上传知识库文档。"
                 )
                 yield {"type": "delta", "text": "未找到相关文档，请先上传知识库文档。"}
                 yield {"type": "done", "conversation_id": conversation.conversation_id}
-                return 
-
+                return
 
             # 先发检索引用，再流式出答案
             yield {"type": "retrieval", "sources": chunk}
@@ -41,7 +41,6 @@ class RAGAgent:
             await conversation.add_message(role="assistant", content="".join(collected))
             yield {"type": "done", "conversation_id": conversation.conversation_id}
 
-
         elif intent == "chitchat":
             collected = []
             async for delta in self.llm_client.stream_chat(conversation.history_cache):
@@ -50,21 +49,13 @@ class RAGAgent:
             await conversation.add_message(role="assistant", content="".join(collected))
             yield {"type": "done", "conversation_id": conversation.conversation_id}
 
-
         elif intent == "document_management":
             yield {"type": "delta", "text": "请转入文档管理页处理文档相关操作"}
             yield {"type": "done", "conversation_id": conversation.conversation_id}
 
-
         else:
             yield {"type": "delta", "text": "该请求与知识库无关"}
             yield {"type": "done", "conversation_id": conversation.conversation_id}
-
-
-
-
-
-
 
     # LLM意图识别
     async def llm_intent_classifier(self, conversation: ConversationManager, user_input: str):
@@ -72,7 +63,7 @@ class RAGAgent:
 
         # 构造message，以准备注入llm生成回答
         message = [
-            {"role" : "system", "content" : llm_intents_classifier_prompt},
+            {"role": "system", "content": llm_intents_classifier_prompt},
         ]
         # 检查会话历史
         context_hint = ""
@@ -84,7 +75,7 @@ class RAGAgent:
             )
         # 历史存在，则注入prompt
         if context_hint:
-            message.append({"role" : "system", "content" : context_hint})
+            message.append({"role": "system", "content": context_hint})
         # 正常注入用户输入
         message.append({"role": "user", "content": user_input})
         # 非流式调用llm生成回答
@@ -94,7 +85,7 @@ class RAGAgent:
                 temperature=0,
                 stream=False,
                 response_format={"type": "json_object"},
-                model=settings.DEEPSEEK_MODEL
+                model=settings.DEEPSEEK_MODEL,
             )
 
             # 返回JSON格式判断结果
@@ -106,14 +97,3 @@ class RAGAgent:
         except Exception as e:
             print(f"[WARN] LLM 意图分类失败，回退关键词: {e}")
             return None
-
-
-
-
-
-
-
-        
-
-
-

@@ -1,4 +1,5 @@
 """手写 parser"""
+
 from pathlib import Path
 
 import fitz
@@ -18,6 +19,7 @@ def parse_file(file_path: str):
     else:
         raise BadRequestError("未支持的文件类型")
 
+
 def parse_pdf(file_path: str) -> str:
     # 打开文件
     pdf = fitz.open(file_path)
@@ -29,6 +31,7 @@ def parse_pdf(file_path: str) -> str:
     pdf.close()
     return "\n\n".join(text)
 
+
 def parse_docx(file_path: str) -> str:
     docx = Document(file_path)
     texts = []
@@ -36,11 +39,7 @@ def parse_docx(file_path: str) -> str:
         texts.append(para.text)
     return "\n\n".join(texts)
 
+
 def parse_md(file_path: str):
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         return f.read()
-
-
-
-
-

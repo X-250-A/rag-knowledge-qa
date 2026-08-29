@@ -5,7 +5,9 @@ from backend.app.models import Documents
 
 
 # 创建新文件
-async def create_document(db: AsyncSession, user_id: int, file_name: str, file_type: str, file_size: float):
+async def create_document(
+    db: AsyncSession, user_id: int, file_name: str, file_type: str, file_size: float
+):
     document = Documents(
         user_id=user_id,
         file_name=file_name,
@@ -17,15 +19,17 @@ async def create_document(db: AsyncSession, user_id: int, file_name: str, file_t
     await db.refresh(document)
     return document
 
+
 # 查询单个文件
-async def get_document(db: AsyncSession, document_id: int, user_id : int | None = None):
+async def get_document(db: AsyncSession, document_id: int, user_id: int | None = None):
     query = select(Documents).where(Documents.id == document_id)
     if user_id is not None:
         query = query.where(Documents.user_id == user_id)
     result = await db.execute(query)
     return result.scalar_one_or_none()
 
-async def find_document_by_file_name(db: AsyncSession, file_name: str, user_id : int | None = None):
+
+async def find_document_by_file_name(db: AsyncSession, file_name: str, user_id: int | None = None):
     query = select(Documents).where(Documents.file_name == file_name)
     if user_id is not None:
         query = query.where(Documents.user_id == user_id)
@@ -33,15 +37,17 @@ async def find_document_by_file_name(db: AsyncSession, file_name: str, user_id :
     return result.scalar_one_or_none()
 
 
-
 # 查询当前用户的文件列表
-async def get_documents_list(db: AsyncSession, user_id: int, page: int, page_size: int, limit: int = 100):
-    query = (select(Documents)
-             .where(Documents.user_id == user_id)
-             .order_by(Documents.updated_at.desc())
-             .offset((page - 1) * page_size)
-             .limit(limit)
-             )
+async def get_documents_list(
+    db: AsyncSession, user_id: int, page: int, page_size: int, limit: int = 100
+):
+    query = (
+        select(Documents)
+        .where(Documents.user_id == user_id)
+        .order_by(Documents.updated_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(limit)
+    )
     result = await db.execute(query)
     return result.scalars().all()
 
@@ -79,24 +85,28 @@ async def delete_document(db: AsyncSession, document_id: int):
 
 
 # 删除当前用户指定数量文件
-async def delete_documents_list(db: AsyncSession, user_id: int, page: int, page_size: int, limit: int):
-    documents = (select(Documents)
-             .where(Documents.user_id == user_id)
-             .order_by(Documents.updated_at.desc())
-             .offset((page - 1) * page_size)
-             .limit(limit)
-             )
+async def delete_documents_list(
+    db: AsyncSession, user_id: int, page: int, page_size: int, limit: int
+):
+    documents = (
+        select(Documents)
+        .where(Documents.user_id == user_id)
+        .order_by(Documents.updated_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(limit)
+    )
     await db.delete(documents)
     await db.commit()
     return documents
 
+
 # 更新文件状态
 async def update_document_status(
-        db: AsyncSession,
-        document_id: int,
-        *,
-        status: str | None = None,
-        chunk_count: int | None = None,
+    db: AsyncSession,
+    document_id: int,
+    *,
+    status: str | None = None,
+    chunk_count: int | None = None,
 ):
     document_to_update = await get_document(db, document_id)
     if document_to_update is None:
@@ -110,4 +120,3 @@ async def update_document_status(
     await db.commit()
     await db.refresh(document_to_update)
     return document_to_update
-
