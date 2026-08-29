@@ -1,13 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # ---------- 请求 ----------
 
 class ChatRequest(BaseModel):
     """用户提问"""
-    question: str                          # 用户的问题
-    document_ids: list[int] | None = None  # 指定在哪些文档范围内检索，None = 全库检索
-    conversation_id: int | None = None
+    question: str = Field(max_length=100, min_length=1)                         # 用户的问题
+    document_ids: list[int] | None = Field(default=None)  # 指定在哪些文档范围内检索，None = 全库检索
+    conversation_id: int | None = Field(default=None, ge=1)
 
 
 # ---------- 响应 ----------

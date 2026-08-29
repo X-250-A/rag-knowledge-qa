@@ -1,9 +1,8 @@
 from pathlib import Path
 import logging
 
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from backend.app.crud import (
     create_document,
@@ -15,6 +14,7 @@ from backend.app.crud import (
     find_document_by_file_name,
 )
 from backend.app.db import get_db
+from backend.app.exceptions import ConflictError, NotFoundError
 from backend.app.models import User
 from backend.app.rag.pipeline import build
 from backend.app.services import (
@@ -39,7 +39,7 @@ async def upload_documents(
     file_path = Path(UPLOAD_DIR) / file.filename
     existing = await find_document_by_file_name(db=db, file_name=file.filename, user_id=current_user.id)
     if existing:
-        raise HTTPException(status_code=400, detail="Document already exists")
+        raise ConflictError("Document already exists")
 
     with open(file_path, "wb") as f:
         f.write(await file.read())
@@ -62,14 +62,14 @@ async def upload_documents(
 
 @router.get("/")
 async def list_document(
-    page : int = 1,
-    page_size: int = 20,
+    page : int = Query(ge=1, default=1),
+    page_size: int = Query(default=20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     documents = await get_documents_list(db=db, page=page, page_size=page_size, user_id=current_user.id)
     if documents is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        raise NotFoundError()
     return documents
 
 
@@ -81,7 +81,7 @@ async def delete_some_document(
 ):
     documents = await get_document(db=db, document_id=document_id, user_id=current_user.id)
     if documents is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        raise NotFoundError()
     file_name = documents.file_name
     file_path = Path(UPLOAD_DIR) / file_name
 

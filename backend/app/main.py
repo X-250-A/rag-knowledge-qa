@@ -13,6 +13,10 @@ from backend.app.routers import (
     documents_router as document_router,
     conversations_router as conversation_router,
 )
+from backend.app.logging_config import setup_logging
+from backend.app.exceptions import register_exception_handlers
+
+setup_logging()
 
 
 @asynccontextmanager
@@ -25,6 +29,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(version="0.1.0", lifespan=lifespan)
+register_exception_handlers(app)
 
 
 
@@ -50,6 +55,5 @@ app.add_middleware(
     allow_headers=["*"],
     allow_methods=["*"],
 )
-
 
 

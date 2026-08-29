@@ -39,5 +39,8 @@ class Settings(BaseSettings):
     LLM_READ_TIMEOUT: float = 45.0  # 等待服务器响应的单次 read 间隔
     LLM_REQUEST_TIMEOUT: float = 90.0  # 整个 API 调用的总时长上限（传给 SDK）
 
+    # logging配置
+    LOG_LEVEL : str = "INFO"
+
 
 settings = Settings()

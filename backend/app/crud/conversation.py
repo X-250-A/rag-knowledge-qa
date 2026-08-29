@@ -1,8 +1,8 @@
 # 对某条会话的增删改查
-from fastapi import HTTPException
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.app.exceptions import NotFoundError
 from backend.app.models.conversation import Conversation
 
 
@@ -46,7 +46,7 @@ async def find_conversation_by_conversation_id(
 async def delete_conversation(db: AsyncSession, conversation_id: int):
     result = await find_conversation_by_conversation_id(db, conversation_id)
     if result is None:
-        raise HTTPException(status_code=404, detail="Conversation not found")
+        raise NotFoundError("Conversation not found")
     await db.delete(result)
     await db.commit()
     return result

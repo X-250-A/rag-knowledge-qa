@@ -1,6 +1,5 @@
-from fastapi import Depends, HTTPException, APIRouter
+from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from backend.app.crud import (
     get_current_user,
@@ -9,6 +8,7 @@ from backend.app.crud import (
     get_all_messages,
 )
 from backend.app.db import get_db
+from backend.app.exceptions import ForbiddenError, NotFoundError
 from backend.app.models import User
 from backend.app.schemas.conversation import ConversationOut, MessageOut
 
@@ -27,7 +27,7 @@ async def list_conversations(
 
 @router.get("/{conversation_id}/messages", response_model=list[MessageOut])
 async def list_messages(
-    conversation_id: int,
+    conversation_id: int = Path(..., ge=1),
     current_user = Depends(get_current_user),
     db : AsyncSession = Depends(get_db)
 ):
@@ -37,9 +37,9 @@ async def list_messages(
     )
 
     if conversation is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        raise NotFoundError()
     if conversation.user_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+        raise ForbiddenError()
 
     return await get_all_messages(
         db=db,

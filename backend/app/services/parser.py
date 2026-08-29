@@ -4,6 +4,8 @@ from pathlib import Path
 import fitz
 from docx import Document
 
+from backend.app.exceptions import BadRequestError
+
 
 def parse_file(file_path: str):
     suffix = Path(file_path).suffix.lower()
@@ -14,7 +16,7 @@ def parse_file(file_path: str):
     elif suffix == ".md":
         return parse_md(file_path)
     else:
-        raise ValueError("未支持的文件类型")
+        raise BadRequestError("未支持的文件类型")
 
 def parse_pdf(file_path: str) -> str:
     # 打开文件

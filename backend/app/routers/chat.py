@@ -1,9 +1,8 @@
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from backend.app.agent.RAG_agent import RAGAgent
 from backend.app.agent.conversation import ConversationManager
@@ -13,6 +12,7 @@ from backend.app.crud import (
     find_conversation_by_conversation_id,
 )
 from backend.app.db import get_db
+from backend.app.exceptions import NotFoundError
 from backend.app.models import User
 from backend.app.schemas import ChatRequest
 
@@ -32,7 +32,7 @@ async def chat(
     else:
         conversation = await find_conversation_by_conversation_id(db, request.conversation_id)
         if conversation is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+            raise NotFoundError()
         conversation_id = request.conversation_id
 
     conversation_manager = ConversationManager(
