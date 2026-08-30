@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 
 
@@ -18,3 +20,10 @@ class LoginRequest(BaseModel):
 class LoginResponse(BaseModel):
     token: str
     token_type: str
+
+
+class UserOut(BaseModel):
+    username: str
+    id: int
+    created_at: datetime
+    updated_at: datetime

@@ -14,9 +14,10 @@ from backend.app.crud import (
     update_document_status,
 )
 from backend.app.db import get_db
-from backend.app.exceptions import ConflictError, NotFoundError
+from backend.app.exceptions import BadRequestError, ConflictError, NotFoundError
 from backend.app.models import User
 from backend.app.rag.pipeline import build
+from backend.app.schemas.document import DocumentOut
 from backend.app.services import (
     delete_collection,
     initializing_client,
@@ -29,17 +30,19 @@ logger = logging.getLogger(__name__)
 UPLOAD_DIR = "uploads"
 
 
-@router.post("/")
+@router.post("/", response_model=DocumentOut)
 async def upload_documents(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    file_name = file.filename
+    if file_name is None:
+        raise BadRequestError("File name is required")
+
     Path(UPLOAD_DIR).mkdir(exist_ok=True)
-    file_path = Path(UPLOAD_DIR) / file.filename
-    existing = await find_document_by_file_name(
-        db=db, file_name=file.filename, user_id=current_user.id
-    )
+    file_path = Path(UPLOAD_DIR) / file_name
+    existing = await find_document_by_file_name(db=db, file_name=file_name, user_id=current_user.id)
     if existing:
         raise ConflictError("Document already exists")
 
@@ -48,12 +51,12 @@ async def upload_documents(
 
     suffix = file_path.suffix.lstrip(".")
     documents = await create_document(
-        db, current_user.id, file.filename, suffix, file_size=file.size
+        db, current_user.id, file_name, suffix, file_size=float(file.size or 0)
     )
 
     await update_document_status(db=db, document_id=documents.id, status="parsing")
     try:
-        text = parse_file(file_path)
+        text = parse_file(str(file_path))
         await build(
             db=db,
             text=text,
@@ -69,7 +72,7 @@ async def upload_documents(
         raise e
 
 
-@router.get("/")
+@router.get("/", response_model=list[DocumentOut])
 async def list_document(
     page: int = Query(ge=1, default=1),
     page_size: int = Query(default=20, ge=1, le=100),

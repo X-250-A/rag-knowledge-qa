@@ -17,7 +17,10 @@ class LlmClient:
             ),
         )
         self.client = AsyncOpenAI(
-            http_client=http_client,
+            # openai>=3.x 的 http_client 形参标注为 httpx2.AsyncClient，但运行时
+            # 同样接受 httpx.AsyncClient（is_legacy_httpx_async_client 分支）；
+            # 此处传 httpx.AsyncClient 属库 stub 标注偏窄的误报，忽略该条。
+            http_client=http_client,  # type: ignore[reportArgumentType]
             api_key=settings.DEEPSEEK_API_KEY,
             base_url=settings.BASE_URL,
         )

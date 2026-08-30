@@ -14,3 +14,11 @@ repos:
       - id: end-of-file-fixer      # 文件末尾补换行（就是 W292 那个）
       - id: check-yaml             # 校验 yaml 语法
       - id: check-merge-conflict   # 防止提交未解决的冲突标记
+
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.390                  # 与 pyproject 里的 pyright 版本保持一致
+    hooks:
+      - id: pyright
+        args: [backend, --pythonpath, .venv/Scripts/python.exe]
+        # pyright-python hook 在隔离环境运行，须显式指定项目解释器，
+        # 否则 numpy/fastapi 等第三方包 import 全部报 reportMissingImports

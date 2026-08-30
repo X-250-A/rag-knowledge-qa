@@ -1,4 +1,5 @@
 import chromadb
+import numpy as np
 
 
 def initializing_client():
@@ -8,7 +9,7 @@ def initializing_client():
 def add_collection(
     client,
     chunks: list,
-    embedding: list,
+    embedding: np.ndarray,
     document_id: int = 0,
     document_name: str = "",
     user_id: int = 0,
@@ -32,7 +33,7 @@ def add_collection(
     return collection
 
 
-def query_collection(client, embedding: list, top_k: int = 5, user_id: int | None = None):
+def query_collection(client, embedding: np.ndarray, top_k: int = 5, user_id: int | None = None):
     collection = client.get_or_create_collection("documents")
     where = {"user_id": user_id} if user_id is not None else None
     query = collection.query(

@@ -1,6 +1,7 @@
 import json
 
 from app import settings
+from openai.types.chat import ChatCompletionMessageParam
 
 from backend.app.agent.conversation import ConversationManager
 from backend.app.services import LlmClient, PromptBuilder, retrieve
@@ -62,7 +63,7 @@ class RAGAgent:
         llm_intents_classifier_prompt = self.prompt_builder.llm_intents_classifier_prompt
 
         # 构造message，以准备注入llm生成回答
-        message = [
+        message: list[ChatCompletionMessageParam] = [
             {"role": "system", "content": llm_intents_classifier_prompt},
         ]
         # 检查会话历史
@@ -89,7 +90,10 @@ class RAGAgent:
             )
 
             # 返回JSON格式判断结果
-            result = json.loads(response.choices[0].message.content)
+            content = response.choices[0].message.content
+            if content is None:
+                return None
+            result = json.loads(content)
             intent = result.get("intent")
             if intent not in ("rag_query", "chitchat", "document_management", "out_of_scope"):
                 return "unclear"

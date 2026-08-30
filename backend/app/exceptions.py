@@ -1,4 +1,5 @@
 import logging
+from typing import cast
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -41,10 +42,11 @@ class UnauthorizedError(AppError):
     default_detail: str = "Unauthorized"
 
 
-async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
+async def app_error_handler(request: Request, exc: Exception) -> JSONResponse:
+    app_error = cast(AppError, exc)
     return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail},
+        status_code=app_error.status_code,
+        content={"detail": app_error.detail},
     )
 
 

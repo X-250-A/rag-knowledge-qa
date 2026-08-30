@@ -5,6 +5,7 @@ from backend.app.schemas.auth import (
     LoginResponse,
     RegisterRequest,
     RegisterResponse,
+    UserOut,
 )
 
 # ---- chat ----
@@ -27,6 +28,7 @@ __all__ = [
     "RegisterResponse",
     "LoginRequest",
     "LoginResponse",
+    "UserOut",
     # document
     "DocumentOut",
     "DocumentListOut",

@@ -15,6 +15,7 @@ from backend.app.schemas import (
     LoginResponse,
     RegisterRequest,
     RegisterResponse,
+    UserOut,
 )
 from backend.app.utils import create_access_token
 
@@ -32,15 +33,15 @@ async def register(user: RegisterRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login")
 async def login(user: LoginRequest, db: AsyncSession = Depends(get_db)):
-    user = await verify_user(db, user.username, user.password)
-    if not user:
+    db_user = await verify_user(db, user.username, user.password)
+    if not db_user:
         # 保持 400（BadRequestError）而非 401：前端把任何 401 当"登录过期"，
         # 会误跳转/清 token，导致真实错误信息显示不出来。
         raise BadRequestError("Incorrect username or password")
-    token = create_access_token({"user_id": user.id})
+    token = create_access_token({"user_id": db_user.id})
     return LoginResponse(token=token, token_type="bearer")
 
 
-@router.get("/me")
+@router.get("/me", response_model=UserOut)
 async def me(current_user: User = Depends(get_current_user)):
     return current_user

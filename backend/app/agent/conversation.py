@@ -46,7 +46,7 @@ class ConversationManager:
         role: str,
         content: str,
         max_token: int = 10000,
-        token_counter: Callable[[int], int] = None,
+        token_counter: Callable[[str], int] | None = None,
     ):
         # 获取并追加历史上下文
         messages = await get_all_messages(db=self.db, conversation_id=self.conversation_id)
@@ -56,7 +56,11 @@ class ConversationManager:
         current_token = 0
         # 根据max_token裁剪上下文
         for message in reversed(all_history):
-            message_token = token_counter(message["content"])
+            message_token = (
+                token_counter(message["content"])
+                if token_counter is not None
+                else len(message["content"])
+            )
             if message_token + current_token > max_token:
                 break
             current_token += message_token
