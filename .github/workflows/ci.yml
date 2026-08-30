@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint & format (ruff + pre-commit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # pre-commit 会自动拉取 .pre-commit-config.yaml 里的 hook（ruff 等）
+      - name: Run pre-commit
+        run: uv tool run pre-commit run --all-files
+      # 类型检查：静态验证数据形状，与 ruff 互补
+      - name: Type check (pyright)
+        run: uvx pyright backend
+
+  test:
+    name: Tests (pytest)
+    runs-on: ubuntu-latest
+    env:
+      # 测试 key：非空、且不含占位符 "change-me"，能通过 config 静态校验
+      DEEPSEEK_API_KEY: ci-test-key-123456789
+      SECRET_KEY: ci-test-secret-1234567890
+      # embedding.py 里用 setdefault 强制 HF_HUB_OFFLINE=1（防本地挂起），
+      # 这里预置为 0 覆盖它，允许 CI 联网下载 bge-m3 权重
+      HF_HUB_OFFLINE: "0"
+      TRANSFORMERS_OFFLINE: "0"
+      HF_ENDPOINT: https://hf-mirror.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # uv sync 会装全量依赖（含 Linux 的 cu130 版 torch），较重
+      - name: Install dependencies
+        run: uv sync
+      # 缓存 bge-m3 模型（约 2.3GB），避免每次 CI 重新下载
+      - name: Cache HuggingFace model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-bge-m3-${{ runner.os }}
+      - name: Run tests
+        run: uv run python -m pytest -q -p no:cacheprovider

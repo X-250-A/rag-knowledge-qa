@@ -47,6 +47,7 @@ dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",           # async 测试（asyncio_mode=auto 见下方配置）
     "ruff>=0.5",                      # 代码规范（PyCharm 有原生集成）
+    "pyright>=1.1.390",               # 类型检查（静态验证数据形状自洽，区别于 ruff）
 ]
 
 [build-system]
@@ -67,6 +68,11 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP"]
 ignore = ["E501"]                     # 行宽交给 formatter，不交给 lint
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"            # 先 basic，存量代码类型补齐后再升 strict
+include = ["backend"]
 
 # torch 专用源：RTX 50 系显卡必须 cu130 版（默认 PyPI 的 cu12x 版会
 # access violation 崩溃）。explicit=true 表示该源只服务显式指定的包。
