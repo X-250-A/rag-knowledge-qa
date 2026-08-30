@@ -14,6 +14,10 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+      # pre-commit 里的 pyright hook 依赖项目 .venv 解析第三方包，
+      # 必须先同步依赖再跑 pre-commit
+      - name: Install dependencies
+        run: uv sync
       # pre-commit 会自动拉取 .pre-commit-config.yaml 里的 hook（ruff 等）
       - name: Run pre-commit
         run: uv tool run pre-commit run --all-files
