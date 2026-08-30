@@ -36,7 +36,10 @@ node_modules/
 out/
 
 # ========== 本地模型缓存（体积大，按需下载） ==========
-models/
+# 仅匹配任意层级的 models/ 目录会误伤 backend/app/models（ORM 模型源码），
+# 改为锚定常见模型缓存位置
+/models/
+**/hf-models/
 *.tsbuildinfo
 
 # pre-commit 测试残留缓存

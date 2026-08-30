@@ -73,6 +73,8 @@ ignore = ["E501"]                     # 行宽交给 formatter，不交给 lint
 pythonVersion = "3.12"
 typeCheckingMode = "basic"            # 先 basic，存量代码类型补齐后再升 strict
 include = ["backend"]
+venvPath = "."                        # 跨平台定位 .venv（bin/Scripts 由 pyright 自辨）
+venv = ".venv"
 
 # torch 专用源：RTX 50 系显卡必须 cu130 版（默认 PyPI 的 cu12x 版会
 # access violation 崩溃）。explicit=true 表示该源只服务显式指定的包。

@@ -19,6 +19,6 @@ repos:
     rev: v1.1.390                  # 与 pyproject 里的 pyright 版本保持一致
     hooks:
       - id: pyright
-        args: [backend, --pythonpath, .venv/Scripts/python.exe]
-        # pyright-python hook 在隔离环境运行，须显式指定项目解释器，
-        # 否则 numpy/fastapi 等第三方包 import 全部报 reportMissingImports
+        args: [backend]
+        # 解释器经 pyproject [tool.pyright] venvPath/venv 定位（跨平台），
+        # 无需 --pythonpath 硬编码 Windows 路径
