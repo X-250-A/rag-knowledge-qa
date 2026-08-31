@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.app.db import engine
 from backend.app.exceptions import register_exception_handlers
 from backend.app.logging_config import setup_logging
-from backend.app.middleware import jwt_middleware
+from backend.app.middleware import jwt_middleware, timing_middleware
 from backend.app.models import Base
 from backend.app.routers import (
     auth_router,
@@ -51,6 +51,7 @@ app.include_router(conversation_router, prefix="/api")
 # jwt_middleware 之后（最外层），这样浏览器的 OPTIONS 预检和 JWT 返回的
 # 401/400 响应都能带上 CORS 头，否则跨域请求会 "failed to fetch"。
 app.middleware("http")(jwt_middleware)
+app.middleware("http")(timing_middleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

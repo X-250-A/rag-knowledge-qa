@@ -4,6 +4,7 @@ from pathlib import Path
 from backend.app.config import settings
 
 LOG_DIR = Path(__file__).resolve().parent.parent / "logs"  # backend/logs
+logger = logging.getLogger("app")
 
 
 def setup_logging():
