@@ -1,13 +1,11 @@
 import time
+
 from fastapi import Request
+
 from backend.app.logging_config import logger
 
 
-
-async def timing_middleware(
-    request: Request,
-    call_next
-):
+async def timing_middleware(request: Request, call_next):
     start = time.perf_counter()
     try:
         response = await call_next(request)
@@ -20,4 +18,3 @@ async def timing_middleware(
             f"elapsed_ms={round(elapsed_ms, 1)}",
         )
     return response
-
