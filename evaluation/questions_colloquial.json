@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "note": "L1 口语化改写题（Hermes 起草，用户验收）。问题全部用口语/同义表述，与原文措辞有词汇距离；chunk_seq 按 chunk_preview (chunk_text,300,50) 实际切分核对。",
+    "levels": "L1",
+    "eval_user": 12
+  },
+  "questions": [
+    {
+      "id": "H1-01",
+      "level": "L1",
+      "question": "为啥从一堆乱序的名字里找某个人，用排好序的名单会快很多？这个查找办法叫什么，多快？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 8,
+      "category": "colloquial",
+      "reference_answer": "这就是二分查找：针对已排序的数组，每次取中间元素比较，根据大小关系排除一半区间，时间复杂度 O(log n)。前提是数据有序且支持随机访问。"
+    },
+    {
+      "id": "H1-02",
+      "level": "L1",
+      "question": "ArrayList 装满了再往里塞东西会发生什么？为什么平时感觉不到卡？",
+      "document_name": "01_数组与链表.md",
+      "chunk_seq": 3,
+      "category": "colloquial",
+      "reference_answer": "动态数组容量满时会申请更大的内存并复制原有元素（通常扩容为两倍）。因为扩容不频繁，均摊下来每次追加仍是 O(1)，所以平时感觉不到。"
+    },
+    {
+      "id": "H1-03",
+      "level": "L1",
+      "question": "我写代码忘了配对括号，程序里是怎么检查出来的？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 2,
+      "category": "colloquial",
+      "reference_answer": "用栈做括号匹配：遇到左括号入栈，遇到右括号弹出栈顶左括号进行配对，最后栈为空则匹配成功。这是栈的典型应用之一。"
+    },
+    {
+      "id": "H1-04",
+      "level": "L1",
+      "question": "红黑树绕来绕去搞那么复杂，比 AVL 树到底好在哪？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 7,
+      "category": "colloquial",
+      "reference_answer": "红黑树是弱平衡的二叉搜索树，不像 AVL 那样严格要求高度差不超过 1，只保证最长路径不超过最短路径的两倍。代价是牺牲部分查找性能，换来插入/删除时更少的旋转操作。"
+    }
+  ]
+}

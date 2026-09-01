@@ -1,0 +1,396 @@
+{
+  "meta": {
+    "topic": "数据结构与算法",
+    "levels": "L2-L5",
+    "eval_user": 12,
+    "note": "16 道第一批加难题（L2~L5 各 4 道）+ 14 道第二批加难题（L2=4、L3=2、L4=4、L5=4）。chunk_seq 由 chunker.py 的 chunk_text(text,300,50) 零基索引得到，已用 evaluation/scripts/chunk_preview.py 核对。L3 跨文档题标注 also_documents；L4 指代消解题带 context 字段。说明：spec 标题写“共 20 道”，但配额明细与 id 范围（X2-01~04、X3-01~02、X4-01~04、X5-01~04）合计 14 道，本批按配额/ID 范围执行 14 道。第三批：新增 L2 混淆题 8 道（Z2-01~08，category=confusion）；对全部 22 道 L3/L4/L5 题做去实体化改写（问题文本中的结构名/算法名替换为描述性说法，chunk_seq 与 reference_answer 保持不变）。"
+  },
+  "questions": [
+    {
+      "id": "H2-01",
+      "question": "队列的入队和出队操作分别在什么位置进行？它通常被用在哪些场景里？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 3,
+      "category": "confusion",
+      "reference_answer": "队列是一种先进先出（FIFO）的线性结构，只在队尾入队（enqueue）、在队头出队（dequeue），两种操作都是 O(1)。队列常用于任务调度、消息队列、以及广度优先搜索（BFS）中保存待访问的节点。",
+      "level": "L2"
+    },
+    {
+      "id": "H2-02",
+      "question": "与单链表相比，双向链表在每个节点里额外保存了什么？这让它在删除节点时省去了什么？",
+      "document_name": "01_数组与链表.md",
+      "chunk_seq": 6,
+      "category": "confusion",
+      "reference_answer": "双向链表额外保存了指向前驱的 prev 指针，可以双向遍历；删除节点时无需知道前驱，因此更便利。",
+      "level": "L2"
+    },
+    {
+      "id": "H2-03",
+      "question": "当排序结果必须保持相同元素的原有相对顺序（即要求稳定）时，应该优先选择哪种排序算法？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 7,
+      "category": "confusion",
+      "reference_answer": "对稳定性有要求时选归并排序。",
+      "level": "L2"
+    },
+    {
+      "id": "H2-04",
+      "question": "标准库中的有序集合和映射（如 C++ 的 map、Java 的 TreeMap）通常选用哪种自平衡二叉搜索树来实现？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 7,
+      "category": "confusion",
+      "reference_answer": "红黑树。它是一种弱平衡的二叉搜索树，通过给节点着色并维护五条性质来保证最长路径不超过最短路径的两倍；插入删除时调整次数比 AVL 树更少。",
+      "level": "L2"
+    },
+    {
+      "id": "H3-01",
+      "question": "如果用一个把键通过散列函数映射到下标的结构来存元素，当已存元素占比过高触发扩容时，除了要把所有键重新安置到更大的空间，还会暴露出它底层那种元素连续存放、靠下标直接定位的线性结构本身有什么缺陷？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 7,
+      "category": "cross_doc",
+      "reference_answer": "数组的大小一旦创建就固定，扩容时需要申请更大的内存并把原有元素整体复制过去；哈希表在负载因子超过阈值（通常 0.75）时会扩容，把所有键重新散列到更大的数组中。",
+      "level": "L3",
+      "also_documents": [
+        {
+          "document_name": "01_数组与链表.md",
+          "chunk_seq": 3
+        }
+      ]
+    },
+    {
+      "id": "H3-02",
+      "question": "当两个不同的键被散列到同一下标时，有一种解决办法是在每个槽上挂一串靠指针串联、内存不连续的节点。它不选那种元素连续存放、靠下标定位的结构，是看中了前者在插入和删除时的什么优点？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 6,
+      "category": "cross_doc",
+      "reference_answer": "链表在已定位到目标位置的前提下，插入和删除节点只需改动相邻节点的指针，不需要移动其他元素，复杂度为 O(1)；链地址法在每个槽挂一条链表来解决哈希冲突，正是利用这一特性。",
+      "level": "L3",
+      "also_documents": [
+        {
+          "document_name": "01_数组与链表.md",
+          "chunk_seq": 5
+        }
+      ]
+    },
+    {
+      "id": "H3-03",
+      "question": "那种每次取中间元素、排除一半区间的查找方法，要求数据有序且支持随机访问。那么如果把数据存放在一种没有下标、靠指针逐个串联、只能从头往后找的结构里，这种查找方法还适用吗？为什么？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 8,
+      "category": "cross_doc",
+      "reference_answer": "不适用。二分查找的前提是数据有序且支持随机访问；而链表没有下标，按索引访问需要从头逐个遍历，随机访问是 O(n)，不满足随机访问的前提。",
+      "level": "L3",
+      "also_documents": [
+        {
+          "document_name": "01_数组与链表.md",
+          "chunk_seq": 4
+        }
+      ]
+    },
+    {
+      "id": "H3-04",
+      "question": "一种把键通过散列函数映射到下标的结构，理想情况下插入、查找、删除都能做到 O(1)。这得益于散列函数把键映射成了什么，以及它底层那种元素连续存放的结构具备的哪种能力？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 5,
+      "category": "cross_doc",
+      "reference_answer": "散列函数把键映射到数组下标；数组元素在内存中连续存放，通过下标可以直接定位到任意元素，随机访问为 O(1)。",
+      "level": "L3",
+      "also_documents": [
+        {
+          "document_name": "01_数组与链表.md",
+          "chunk_seq": 1
+        }
+      ]
+    },
+    {
+      "id": "H4-01",
+      "context": "问：栈是一种什么特性的结构？答：后进先出（LIFO），只在栈顶进行插入和删除。",
+      "question": "那浏览器和编辑器里的'撤销'功能，属于它的哪一种典型应用？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 2,
+      "category": "anaphora",
+      "reference_answer": "撤销功能是栈的典型应用之一，栈的典型应用还包括函数调用栈、括号匹配检查、表达式求值等。",
+      "level": "L4"
+    },
+    {
+      "id": "H4-02",
+      "context": "问：什么是完全二叉树？答：除了最后一层外每一层都被填满，且最后一层的节点都靠左排列。",
+      "question": "那另一种要求更极致、连最后一层也不允许留空的树，和它相比还有什么更严格的要求？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 3,
+      "category": "anaphora",
+      "reference_answer": "满二叉树是每一层都被完全填满，即每个非叶子节点都有两个子节点。",
+      "level": "L4"
+    },
+    {
+      "id": "H4-03",
+      "context": "问：快速排序的平均时间复杂度是多少？答：平均 O(n log n)，是不稳定的算法。",
+      "question": "那它为什么被称为通常最快的通用排序算法？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 4,
+      "category": "anaphora",
+      "reference_answer": "因为快速排序的常数小、缓存友好，所以通常是最快的通用排序算法。",
+      "level": "L4"
+    },
+    {
+      "id": "H4-04",
+      "context": "问：对一棵二叉搜索树做中序遍历会得到什么？答：会得到升序序列。",
+      "question": "那如果对同一棵树，改成三种深度优先遍历里先处理根节点的那一种，它的完整访问顺序是怎样的？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 5,
+      "category": "anaphora",
+      "reference_answer": "前序遍历的顺序是'根左右'，即先访问根节点，再访问左子树，最后访问右子树。",
+      "level": "L4"
+    },
+    {
+      "id": "H5-01",
+      "question": "在实际工程中，经常把一种靠散列函数把键映射到下标的结构，和一种额外保存前驱指针、可以双向遍历的结构组合起来，做成哪种缓存结构？",
+      "document_name": "01_数组与链表.md",
+      "chunk_seq": 7,
+      "category": "long_tail",
+      "reference_answer": "实际工程中经常用哈希表加双向链表组合成 LRU 缓存这样的结构，兼顾两者的优点。",
+      "level": "L5"
+    },
+    {
+      "id": "H5-02",
+      "question": "在一种先进先出、队尾会绕回起点复用已出队空间的线性结构里，如何区分它当前是空状态还是满状态？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 4,
+      "category": "long_tail",
+      "reference_answer": "通常用队头和队尾指针相等表示空，用预留一个空位或计数器来区分空和满。",
+      "level": "L5"
+    },
+    {
+      "id": "H5-03",
+      "question": "那种先把数据组织成父节点总比子节点大的树状结构、再反复取出树顶最大值放到末尾并调整的排序，虽然可以原地完成、空间复杂度 O(1)，但它在实际访问元素时有什么不利于缓存的特性？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 6,
+      "category": "long_tail",
+      "reference_answer": "堆排序因为跳着访问元素，缓存不友好，且不稳定。",
+      "level": "L5"
+    },
+    {
+      "id": "H5-04",
+      "question": "在描述那种由节点和边组成、没有环的层次结构时，除了根节点、父节点、子节点、叶子节点这些概念，人们还会用到哪几个术语？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 1,
+      "category": "long_tail",
+      "reference_answer": "树的相关术语还有深度、高度、层数等。",
+      "level": "L5"
+    },
+    {
+      "id": "X2-01",
+      "question": "两个不同的键被散列到了同一处之后，如果采取“向后逐个试探，直到遇见一个空位置再把元素放进去”的办法，这个办法在文中被命名为什么？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 6,
+      "category": "confusion",
+      "reference_answer": "开放寻址法（冲突时线性探测下一个空位）。",
+      "level": "L2"
+    },
+    {
+      "id": "X2-02",
+      "question": "有一种线性表，元素的加入和移出都只被允许在同一边进行，最早放进去的元素要到最后才能取出来，它叫什么？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 1,
+      "category": "confusion",
+      "reference_answer": "栈，即后进先出（LIFO），只在栈顶插入和删除元素。",
+      "level": "L2"
+    },
+    {
+      "id": "X2-03",
+      "question": "有一种二叉树，它规定任意节点都满足“左边分支上的值比它小、右边分支上的值比它大”，而且左右两个分支各自也符合这条规矩，这种树叫什么？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 4,
+      "category": "confusion",
+      "reference_answer": "二叉搜索树（BST），其左子树所有节点值都小于根节点、右子树所有节点值都大于根节点，且左右子树自身也是二叉搜索树。",
+      "level": "L2"
+    },
+    {
+      "id": "X2-04",
+      "question": "归并排序、快速排序、堆排序三者的时间复杂度都可以达到 O(n log n)（其中快速排序指的是平均情况），但它们在稳定性上有什么差别？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 5,
+      "category": "confusion",
+      "reference_answer": "归并排序是稳定的；快速排序和堆排序都是不稳定的。",
+      "level": "L2"
+    },
+    {
+      "id": "X3-01",
+      "question": "那种先把元素组织成父节点总比子节点大的树、再反复取出树顶最大值放到末尾并调整的排序，它底层用来组织元素的这个树状结构，通常属于哪一种树？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 3,
+      "category": "cross_doc",
+      "reference_answer": "完全二叉树。二叉堆和优先队列常用完全二叉树实现（03#3）；堆排序借助最大堆，先把数组构造成堆，再反复取出堆顶最大值放到数组末尾并调整堆（04#6）。",
+      "level": "L3",
+      "also_documents": [
+        {
+          "document_name": "04_排序与查找.md",
+          "chunk_seq": 6
+        }
+      ]
+    },
+    {
+      "id": "X3-02",
+      "question": "那种先把元素组织成父节点总比子节点大的树、再反复取出树顶最大值放到末尾并调整的排序，能够只用 O(1) 的额外空间、不必另开一份数据就完成。结合元素连续存放、靠下标可以直接定位这一点，说明它为什么能在原来的序列上就地完成？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 6,
+      "category": "cross_doc",
+      "reference_answer": "数组元素在内存中连续存放、通过下标可以直接定位到任意元素，可以在原数组上直接交换元素位置完成排序（01#1）；堆排序空间复杂度 O(1)、原地完成，先把数组构造成堆再反复取出堆顶调整，无需额外数组空间（04#6）。",
+      "level": "L3",
+      "also_documents": [
+        {
+          "document_name": "01_数组与链表.md",
+          "chunk_seq": 1
+        }
+      ]
+    },
+    {
+      "id": "X4-01",
+      "context": "问：栈在元素进出上遵循什么规律？答：后进先出（LIFO），只能在栈顶进行插入和删除。",
+      "question": "那它在函数调用这个场景里，扮演的是什么角色？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 2,
+      "category": "anaphora",
+      "reference_answer": "函数调用栈是栈的典型应用之一；栈的典型应用包括函数调用栈、括号匹配检查、表达式求值、以及浏览器和编辑器的撤销功能。",
+      "level": "L4"
+    },
+    {
+      "id": "X4-02",
+      "context": "问：AVL 树的平衡条件是什么？答：任意节点的左右子树高度差绝对值不超过 1。",
+      "question": "那另一种追求弱平衡、不像刚才那种严格限制左右高度差的树呢？它又是靠什么手段来保证树不会失去平衡？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 7,
+      "category": "anaphora",
+      "reference_answer": "红黑树是一种弱平衡的二叉搜索树，通过给节点着色并维护五条性质，来保证最长路径不超过最短路径的两倍。",
+      "level": "L4"
+    },
+    {
+      "id": "X4-03",
+      "context": "问：插入排序的基本做法是什么？答：把数组分成已排序和未排序两部分，逐个把未排序元素插入到已排序部分的正确位置。问：那选择排序呢？答：每轮从剩余未排序元素中选出最小值，放到已排序部分的末尾。",
+      "question": "前者这种'逐个往已排好的部分里插入'的过程，在文中被比作哪个日常动作？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 3,
+      "category": "anaphora",
+      "reference_answer": "类似整理扑克牌。插入排序把数组分成已排序和未排序两部分，逐个把未排序元素插入到已排序部分的正确位置，类似整理扑克牌。",
+      "level": "L4"
+    },
+    {
+      "id": "X4-04",
+      "context": "问：如果需要保证排序后相同元素的相对顺序不变，该选哪种？答：归并排序。",
+      "question": "那如果反过来，要求不另外开辟空间、直接在原来的序列上就地完成排序，并且不在乎稳定性，又该选哪个？",
+      "document_name": "04_排序与查找.md",
+      "chunk_seq": 7,
+      "category": "anaphora",
+      "reference_answer": "堆排序。要求原地排序且不关心稳定性时，堆排序合适。",
+      "level": "L4"
+    },
+    {
+      "id": "X5-01",
+      "question": "在那种靠指针串联的线性结构的实现中，人们常常额外放置一个不存业务数据的头节点，这样做是为了什么？",
+      "document_name": "01_数组与链表.md",
+      "chunk_seq": 6,
+      "category": "long_tail",
+      "reference_answer": "为了操作方便，常引入不存数据的头节点（哨兵节点）来简化边界判断。",
+      "level": "L5"
+    },
+    {
+      "id": "X5-02",
+      "question": "那种每个节点最多有两个孩子的树，深度优先遍历有三种：一种把根节点放在最前面访问，另一种把根节点放在左、右两个分支之间访问，那剩下的一种，它的访问顺序是什么？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 5,
+      "category": "long_tail",
+      "reference_answer": "后序遍历，顺序是“左右根”，即先访问左子树、再访问右子树、最后访问根节点。",
+      "level": "L5"
+    },
+    {
+      "id": "X5-03",
+      "question": "那种元素连续存放的线性结构的容量一旦定下来就不能再变了，为了绕过这个限制，它的动态版本在不同语言里有不同的名字，文中提到了哪两个？",
+      "document_name": "01_数组与链表.md",
+      "chunk_seq": 3,
+      "category": "long_tail",
+      "reference_answer": "Java 的 ArrayList 和 Python 的 list。",
+      "level": "L5"
+    },
+    {
+      "id": "X5-04",
+      "question": "一种后进先出、只在同一端插入和删除的线性结构，元素先放进去的反而要后拿出来，这一特性对应的英文缩写是哪一个？",
+      "document_name": "02_栈队列哈希表.md",
+      "chunk_seq": 1,
+      "category": "long_tail",
+      "reference_answer": "LIFO（后进先出）。入栈 push、出栈 pop、查看栈顶 peek 的时间复杂度都是 O(1)。",
+      "level": "L5"
+    },
+    {
+      "id": "Z2-01",
+      "question": "跳表和普通有序链表都维护一组有序元素，但查找思路不同：普通有序链表必须从头逐个比较、只能 O(n)，跳表是通过什么方式把查找复杂度降到 O(log n) 的？",
+      "document_name": "05_跳表.md",
+      "chunk_seq": 1,
+      "category": "confusion",
+      "reference_answer": "跳表在有序链表基础上叠加多层索引：每隔若干节点抽取一个组成上一层索引，再对索引继续抽取形成更高层，查找时先在高层稀疏索引中大步前进，接近目标后下降到底层，从而把复杂度降到 O(log n)。",
+      "level": "L2"
+    },
+    {
+      "id": "Z2-02",
+      "question": "跳表刻意不追求严格平衡，因为维护严格平衡需要像 AVL 树那样在每次插入删除后做旋转调整。跳表是用什么机制来替代这种严格平衡的？",
+      "document_name": "05_跳表.md",
+      "chunk_seq": 7,
+      "category": "confusion",
+      "reference_answer": "跳表用概率保证平衡：它不保证每一次操作都是 O(log n)，但出现退化、复杂度升到 O(n) 的概率极低，实际性能和平衡树相当。",
+      "level": "L2"
+    },
+    {
+      "id": "Z2-03",
+      "question": "同样是存放字符串集合，哈希表查询单个完整字符串只需 O(1)，但当需求变成'给定一个前缀、快速找出所有以它开头的单词'时，为什么 Trie 比哈希表更合适？",
+      "document_name": "06_Trie树与字符串匹配.md",
+      "chunk_seq": 5,
+      "category": "confusion",
+      "reference_answer": "哈希表要支持前缀匹配只能逐个枚举所有键，效率很低；Trie 天然支持前缀查询。",
+      "level": "L2"
+    },
+    {
+      "id": "Z2-04",
+      "question": "Trie 的插入和查询复杂度是 O(m)，其中 m 是字符串长度。这个复杂度最突出的特点是它与什么无关？",
+      "document_name": "06_Trie树与字符串匹配.md",
+      "chunk_seq": 3,
+      "category": "confusion",
+      "reference_answer": "只与字符串长度有关，与字符串集合的大小 n 无关。",
+      "level": "L2"
+    },
+    {
+      "id": "Z2-05",
+      "question": "在判断元素是否连通时，图遍历（如深度优先或广度优先搜索）每次查询都要从起点重新遍历一遍、单次 O(V+E)；相比之下，并查集更适合处理哪一类场景？",
+      "document_name": "07_并查集.md",
+      "chunk_seq": 6,
+      "category": "confusion",
+      "reference_answer": "并查集支持在线地动态合并与查询，每次操作近似 O(1)，适合元素集合不断变化的场景。",
+      "level": "L2"
+    },
+    {
+      "id": "Z2-06",
+      "question": "并查集的两项优化是'按秩合并'和'路径压缩'。如果只使用按秩合并而不用路径压缩，单次操作的时间复杂度会退化到多少？",
+      "document_name": "07_并查集.md",
+      "chunk_seq": 8,
+      "category": "confusion",
+      "reference_answer": "O(log n)。只有两者配合才能达到近似 O(1) 的均摊复杂度。",
+      "level": "L2"
+    },
+    {
+      "id": "Z2-07",
+      "question": "同样是随机访问一个元素，数组和链表一个 O(1)、一个 O(n)，表现正好相反。文中因此把这两种结构的关系概括为哪一种？",
+      "document_name": "01_数组与链表.md",
+      "chunk_seq": 7,
+      "category": "confusion",
+      "reference_answer": "对立互补。数组随机访问快、缓存友好，但插入删除慢且大小固定；链表插入删除快、动态扩容，但随机访问慢、内存开销大。",
+      "level": "L2"
+    },
+    {
+      "id": "Z2-08",
+      "question": "满二叉树和完全二叉树都涉及'每一层是否填满'的约束，但文中说二叉堆和优先队列常用的是其中哪一种？",
+      "document_name": "03_树与二叉树.md",
+      "chunk_seq": 3,
+      "category": "confusion",
+      "reference_answer": "完全二叉树。二叉堆和优先队列常用完全二叉树实现。",
+      "level": "L2"
+    }
+  ]
+}
