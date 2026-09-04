@@ -106,6 +106,9 @@ async def delete_some_document(
     try:
         client = initializing_client()
         delete_collection(client=client, document_id=document_id, user_id=current_user.id)
+        from backend.app.services.bm25_retriever import invalidate
+
+        invalidate(current_user.id)
     except Exception as e:
         logger.error(f"清除向量库失败: {e}")
 

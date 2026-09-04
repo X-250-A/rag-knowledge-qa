@@ -10,17 +10,14 @@ dependencies = [
     "uvicorn[standard]>=0.30",        # ASGI 服务器；[standard] 含 websockets/watchfiles 等
     "python-multipart>=0.0.9",        # FastAPI 文件上传（multipart/form-data）必需
     "sse-starlette>=2.1",             # SSE 流式问答（也可手写 StreamingResponse，此包为省事）
-
     # ---- 配置 / 认证 ----
     "pydantic>=2.7",
     "pydantic-settings>=2.3",         # 读 .env 环境变量（Settings 类）
     "pyjwt>=2.8",                     # JWT 签发/校验（FastAPI 官方现推荐 PyJWT，python-jose 已停维护）
     "bcrypt>=4.0",                    # 密码哈希（passlib 已过时停更，官方建议直接用 bcrypt）
-
     # ---- 数据库（元数据） ----
     "sqlalchemy>=2.0.30",             # 2.0 async 风格
     "aiosqlite>=0.20",
-
     # ---- RAG 核心 ----
     "torch>=2.13",                    # GPU 计算库（从 cu130 源装，见下方 [tool.uv.sources]）
     "chromadb>=0.5",                  # 向量库（纯 Python 嵌入式；注意新版是 Client API 风格）
@@ -28,14 +25,11 @@ dependencies = [
     "rank-bm25>=0.2.2",               # BM25 关键词检索（混合检索第二路）
     "jieba>=0.42",                    # BM25 中文分词——rank_bm25 默认按空格分词，中文必须先用 jieba 切
     "langgraph>=0.2",                 # Agentic RAG：检索质量差时改写查询重试的编排
-
     # ---- LLM ----
     "openai>=1.40",                   # DeepSeek API（OpenAI 兼容协议，直接复用）
-
     # ---- 文档解析 ----
     "pymupdf>=1.24",                  # PDF 解析（中文支持好；import 名是 fitz）
     "python-docx>=1.1",               # Word 解析
-
     # ---- 异步 HTTP（SSE 消费 / 测试客户端） ----
     "httpx>=0.27",
 ]

@@ -47,6 +47,10 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
             status="ready",
             chunk_count=len(chunks),
         )
+        # BM25 索引是内存缓存，入库后必须失效，下次查询重建
+        from backend.app.services.bm25_retriever import invalidate
+
+        invalidate(user_id)
         return len(chunks)
 
     except Exception:
