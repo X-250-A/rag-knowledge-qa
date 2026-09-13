@@ -9,13 +9,14 @@ from backend.app.services import initializing_client
 from backend.app.services.bm25_retriever import get_bm25, tokenize
 from backend.app.services.embedding import get_embedding
 from backend.app.services.vector_store import query_collection
+from backend.app.services.reranker import rerank
 
 RRF_K = 60
 RECALL_PER_PATH = 20
 
 
-def _rrf_fuse(vec_hits: list[dict], bm25_hits: list[dict], top_k: int) -> list[dict]:
-    """两路有序命中列表按 chroma ID 聚合 RRF 分数，返回 top_k。
+def _rrf_fuse(vec_hits: list[dict], bm25_hits: list[dict]) -> list[dict]:
+    """两路有序命中列表按 chroma ID 聚合 RRF 分数，返回全量候选（不截断，截断交给 rerank）。
 
     每个元素含 'id'（chroma ID）、'content'、'metadata'。
     """
@@ -32,7 +33,7 @@ def _rrf_fuse(vec_hits: list[dict], bm25_hits: list[dict], top_k: int) -> list[d
         scores[cid] = scores.get(cid, 0.0) + 1 / (RRF_K + rank)
         first_seen.setdefault(cid, hit)
 
-    ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)[:top_k]
+    ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
     return [first_seen[cid] | {"rrf_score": s} for cid, s in ranked]
 
 
@@ -72,11 +73,14 @@ def hybrid_retrieve(question: str, top_k: int = 5, user_id: int | None = None) -
     vec_hits = _vector_recall(question, user_id)
     bm25_hits = _bm25_recall(question, user_id)
 
-    # BM25 路不可用（无文档/无命中）时退化为纯向量路，保持接口始终可用
-    fused = _rrf_fuse(vec_hits, bm25_hits, top_k) if bm25_hits else vec_hits[:top_k]
+    # BM25 路不可用（无文档/无命中）时退化为纯向量路，保持接口始终可用；
+    # 两条路径都汇合到同一个 rerank，统一精排+截断
+    fused = _rrf_fuse(vec_hits, bm25_hits) if bm25_hits else vec_hits
+
+    hits = rerank(top_k=top_k, query=question, hits=fused)
 
     results = []
-    for hit in fused:
+    for hit in hits:
         meta = hit["metadata"]
         _, seq_no = hit["id"].rsplit("_", 1)
         results.append(
@@ -85,7 +89,8 @@ def hybrid_retrieve(question: str, top_k: int = 5, user_id: int | None = None) -
                 "document_name": meta["document_name"],
                 "seq_no": int(seq_no),
                 "content": hit["content"],
-                "score": round(hit["rrf_score"], 4),
+                "score": round(hit["score"], 4),  # rerank 分（0~1）
+                "rrf_score": round(hit["rrf_score"], 6) if hit.get("rrf_score") is not None else None,  # RRF 原分，评估回溯用（纯向量退化路径可能没有）
             }
         )
     return results
