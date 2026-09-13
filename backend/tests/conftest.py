@@ -35,8 +35,16 @@ async def client(session_factory):
     # —— 决策2：dependency_overrides ——
     # 不碰路由代码，把 get_db 依赖整个换成测试会话工厂
     async def override_get_db():
+        # 镜像真实 get_db 的完整契约（yield 后 commit / 异常 rollback）。
+        # 事务边界上收到 get_db 后，替身若缺收尾 commit，注册数据不落库，
+        # 登录接口会 400——测试替身必须与真实依赖同契约，否则假阳性/假阴性。
         async with session_factory() as db:
-            yield db
+            try:
+                yield db
+                await db.commit()
+            except:
+                await db.rollback()
+                raise
 
     app.dependency_overrides[get_db] = override_get_db
 

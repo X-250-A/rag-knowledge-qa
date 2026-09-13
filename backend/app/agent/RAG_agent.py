@@ -4,6 +4,7 @@ from app import settings
 from openai.types.chat import ChatCompletionMessageParam
 
 from backend.app.agent.conversation import ConversationManager
+from backend.app.logging_config import logger
 from backend.app.services import LlmClient, PromptBuilder, retrieve
 
 """RAG核心Agent"""
@@ -99,5 +100,5 @@ class RAGAgent:
                 return "unclear"
             return intent
         except Exception as e:
-            print(f"[WARN] LLM 意图分类失败，回退关键词: {e}")
+            logger.warning("LLM 意图分类失败，回退关键词：%s", e)
             return None

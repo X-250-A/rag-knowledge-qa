@@ -20,6 +20,9 @@ async def test_conversation_messages(client, auth_headers, session_factory):
         conv_id = conv.id
         await save_message(db, conv_id, "user", "first question")
         await save_message(db, conv_id, "assistant", "first answer")
+        # 事务边界上收到 get_db 后，CRUD 不再自带 commit——
+        # 测试直接用 session_factory 建数据，必须显式提交，API 会话才可见
+        await db.commit()
 
     r = await client.get(f"/api/conversations/{conv_id}/messages", headers=auth_headers)
     assert r.status_code == 200
@@ -43,6 +46,7 @@ async def test_conversation_isolation(client, auth_headers, session_factory):
         conv = await create_conversation(db, user_a.id, "private conversation")
         conv_id = conv.id
         await save_message(db, conv_id, "user", "secret message")
+        await db.commit()  # CRUD 不再自带 commit，测试造数需显式提交
 
     # 用户 B 查 A 的会话消息 → 403（ForbiddenError）
     r = await client.get(f"/api/conversations/{conv_id}/messages", headers=bob_headers)

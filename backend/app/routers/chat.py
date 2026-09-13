@@ -22,7 +22,7 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 @router.post("/")
 async def chat(
     request: ChatRequest,
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db, scope="function"),
     current_user: User = Depends(get_current_user),
 ):
     if request.conversation_id is None:

@@ -17,7 +17,7 @@ router = APIRouter(prefix="/conversations", tags=["conversations"])
 
 @router.get("/", response_model=list[ConversationOut])
 async def list_conversations(
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db, scope="function"),
     current_user: User = Depends(get_current_user),
 ):
     return await find_conversation_by_user_id(db=db, user_id=current_user.id)
@@ -27,7 +27,7 @@ async def list_conversations(
 async def list_messages(
     conversation_id: int = Path(..., ge=1),
     current_user=Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db, scope="function"),
 ):
     conversation = await find_conversation_by_conversation_id(
         db=db, conversation_id=conversation_id

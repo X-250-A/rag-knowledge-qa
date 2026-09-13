@@ -33,7 +33,7 @@ UPLOAD_DIR = "uploads"
 @router.post("/", response_model=DocumentOut)
 async def upload_documents(
     file: UploadFile = File(...),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db, scope="function"),
     current_user: User = Depends(get_current_user),
 ):
     file_name = file.filename
@@ -54,7 +54,7 @@ async def upload_documents(
         db, current_user.id, file_name, suffix, file_size=float(file.size or 0)
     )
 
-    await update_document_status(db=db, document_id=documents.id, status="parsing")
+    await update_document_status(db=db, document_id=documents.id, status="parsing", commit=True)
     try:
         text = parse_file(str(file_path))
         await build(
@@ -64,11 +64,11 @@ async def upload_documents(
             document_name=documents.file_name,
             user_id=current_user.id,
         )
-        await update_document_status(db=db, document_id=documents.id, status="ready")
+        await update_document_status(db=db, document_id=documents.id, status="ready", commit=True)
 
         return documents
     except Exception as e:
-        await update_document_status(db=db, document_id=documents.id, status="failed")
+        await update_document_status(db=db, document_id=documents.id, status="failed", commit=True)
         raise e
 
 
@@ -76,7 +76,7 @@ async def upload_documents(
 async def list_document(
     page: int = Query(ge=1, default=1),
     page_size: int = Query(default=20, ge=1, le=100),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db, scope="function"),
     current_user: User = Depends(get_current_user),
 ):
     documents = await get_documents_list(
@@ -90,7 +90,7 @@ async def list_document(
 @router.delete("/{document_id}")
 async def delete_some_document(
     document_id: int,
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db, scope="function"),
     current_user: User = Depends(get_current_user),
 ):
     documents = await get_document(db=db, document_id=document_id, user_id=current_user.id)

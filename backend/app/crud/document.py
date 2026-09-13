@@ -1,10 +1,12 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.models import Documents
+from backend.app.utils import crud_log
 
 
 # 创建新文件
+@crud_log(action="create_document")
 async def create_document(
     db: AsyncSession, user_id: int, file_name: str, file_type: str, file_size: float
 ):
@@ -15,8 +17,7 @@ async def create_document(
         file_size=file_size,
     )
     db.add(document)
-    await db.commit()
-    await db.refresh(document)
+    await db.flush()  # 生成主键，不结束事务；commit 边界在 get_db
     return document
 
 
@@ -46,13 +47,14 @@ async def get_documents_list(
         .where(Documents.user_id == user_id)
         .order_by(Documents.updated_at.desc())
         .offset((page - 1) * page_size)
-        .limit(limit)
+        .limit(page_size)
     )
     result = await db.execute(query)
     return result.scalars().all()
 
 
 # 更新当前文件
+@crud_log(action="update_document")
 async def update_document(db: AsyncSession, document_id: int, document: Documents):
     document_to_update = await get_document(db, document_id)
     if document_to_update is None:
@@ -69,44 +71,37 @@ async def update_document(db: AsyncSession, document_id: int, document: Document
     if document.status is not None:
         document_to_update.status = document.status
 
-    await db.commit()
-    await db.refresh(document_to_update)
     return document_to_update
 
 
 # 删除指定文件
+@crud_log(action="delete_document")
 async def delete_document(db: AsyncSession, document_id: int):
     document_to_delete = await get_document(db, document_id)
     if document_to_delete is None:
         return None
     await db.delete(document_to_delete)
-    await db.commit()
     return document_to_delete
 
 
 # 删除当前用户指定数量文件
+@crud_log(action="delete_documents_list")
 async def delete_documents_list(
-    db: AsyncSession, user_id: int, page: int, page_size: int, limit: int
+    db: AsyncSession, user_id: int
 ):
-    documents = (
-        select(Documents)
-        .where(Documents.user_id == user_id)
-        .order_by(Documents.updated_at.desc())
-        .offset((page - 1) * page_size)
-        .limit(limit)
-    )
-    await db.delete(documents)
-    await db.commit()
-    return documents
+    await db.execute(delete(Documents).where(Documents.user_id == user_id))
+    return
 
 
 # 更新文件状态
+@crud_log(action="update_document_status")
 async def update_document_status(
     db: AsyncSession,
     document_id: int,
     *,
     status: str | None = None,
     chunk_count: int | None = None,
+    commit: bool = False,
 ):
     document_to_update = await get_document(db, document_id)
     if document_to_update is None:
@@ -117,6 +112,6 @@ async def update_document_status(
         document_to_update.status = status
 
     db.add(document_to_update)
-    await db.commit()
-    await db.refresh(document_to_update)
+    if commit:
+        await db.commit()  # 事务边界上收后，仅 pipeline/路由检查点显式提交（跨请求可见）
     return document_to_update

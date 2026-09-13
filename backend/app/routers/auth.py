@@ -23,7 +23,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register")
-async def register(user: RegisterRequest, db: AsyncSession = Depends(get_db)):
+async def register(user: RegisterRequest, db: AsyncSession = Depends(get_db, scope="function")):
     existing = await find_user_by_username(db, user.username)
     if existing:
         raise ConflictError("User already exists")
@@ -32,7 +32,7 @@ async def register(user: RegisterRequest, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/login")
-async def login(user: LoginRequest, db: AsyncSession = Depends(get_db)):
+async def login(user: LoginRequest, db: AsyncSession = Depends(get_db, scope="function")):
     db_user = await verify_user(db, user.username, user.password)
     if not db_user:
         # 保持 400（BadRequestError）而非 401：前端把任何 401 当"登录过期"，

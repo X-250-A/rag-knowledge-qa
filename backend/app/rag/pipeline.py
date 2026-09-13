@@ -17,7 +17,7 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
     chunks = chunk_text(text, 300, 50)
     try:
         # 开始分块
-        await update_document_status(db=db, document_id=document_id, status="chunking")
+        await update_document_status(db=db, document_id=document_id, status="chunking", commit=True)
         for seq_no, chunk in enumerate(chunks):
             await create_chunk(
                 db=db,
@@ -29,7 +29,7 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
             )
 
         # 向量化并入库
-        await update_document_status(db=db, document_id=document_id, status="embedding")
+        await update_document_status(db=db, document_id=document_id, status="embedding", commit=True)
         embedding = get_embedding(chunks)
         client = initializing_client()
         add_collection(
@@ -42,6 +42,7 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
         )
 
         await update_document_status(
+            commit=True,
             db=db,
             document_id=document_id,
             status="ready",
@@ -54,7 +55,7 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
         return len(chunks)
 
     except Exception:
-        await update_document_status(db=db, document_id=document_id, status="failed")
+        await update_document_status(db=db, document_id=document_id, status="failed", commit=True)
         raise
 
 
