@@ -7,6 +7,7 @@ from backend.app.logging_config import logger
 
 async def timing_middleware(request: Request, call_next):
     start = time.perf_counter()
+    response = None
     try:
         response = await call_next(request)
     finally:

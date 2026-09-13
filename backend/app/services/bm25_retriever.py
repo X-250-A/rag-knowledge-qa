@@ -1,4 +1,7 @@
+import logging
 import jieba
+
+jieba.setLogLevel(logging.WARNING)
 from rank_bm25 import BM25Okapi
 
 from backend.app.services import initializing_client
