@@ -1,4 +1,5 @@
 import os
+import threading
 
 # 模型权重已在本地缓存，强制离线可避免导入时联网检查 huggingface.co 而挂起。
 # 注意：这里不能 True 拉死——CI 需要 HF_HUB_OFFLINE=0 覆盖来首次下载权重，
@@ -12,12 +13,15 @@ from sentence_transformers import SentenceTransformer
 # 首次调用 get_embedding 才初始化。这让测试可以只 mock get_embedding
 # 而无需真的碰模型，也让模块导入在无网环境（CI lint job）下安全。
 model: SentenceTransformer | None = None
+_lock = threading.Lock()
 
 
 def _get_model() -> SentenceTransformer:
     global model
     if model is None:
-        model = SentenceTransformer("BAAI/bge-m3")
+        with _lock:
+            if model is None:
+                model = SentenceTransformer("BAAI/bge-m3")
     return model
 
 
