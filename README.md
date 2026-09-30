@@ -5,7 +5,8 @@
 ## 功能特性
 
 - **文档入库**：上传 PDF / Word / Markdown，自动解析为纯文本并分块（段落优先切分 + 句号补切 + 50 字重叠），bge-m3 本地向量化后写入 ChromaDB
-- **向量检索**：本地 BGE 嵌入 + ChromaDB 向量库语义检索（带 user_id 数据隔离）
+- **混合检索**：向量 + BM25 双路召回 RRF 融合，CrossEncoder 重排精截断（带 user_id 数据隔离）
+- **评估体系**：66 题人工标注评估集，Hit@1 / MRR 量化检索质量（0.906 → 0.963）
 - **意图识别 Agent**：LLM 先判断用户意图（知识库问答 / 闲聊 / 文档管理 / 无关），据此分流处理
 - **引用溯源**：回答自动标注来源（文档名 + 块序号），前端可点击查看原文片段
 - **SSE 流式回答**：检索事件 → 引用事件 → 增量文本 → 完成，前端流式渲染
@@ -25,7 +26,7 @@
 | 前端 | Next.js 16 + React 19 + TypeScript + Tailwind 4 |
 | 工程 | uv / ruff / pytest |
 
-> 说明：本项目的检索方案以**纯向量检索**为核心（MVP 阶段）。混合检索（BM25 + Reranker 重排）、检索自纠（LangGraph）与评估集为规划中的进阶方向，接口与结构已预留，尚未接入。
+> 说明：检索管线已演进到**混合检索 + 重排精排**（向量 + BM25 RRF 融合 → CrossEncoder 精排截断），配套 66 题人工标注评估集（Hit@1/MRR 0.963）。检索自纠（LangGraph 编排的 Agentic 重查）为规划中的进阶方向，接口与结构已预留，尚未接入。
 
 ## 目录结构
 
@@ -38,11 +39,11 @@ rag-knowledge-qa/
 │   │   ├── agent/             # RAGAgent（意图识别 + 问答分流编排）
 │   │   ├── rag/               # pipeline（建库/查询管线）
 │   │   ├── routers/           # auth / documents / chat / conversations / health
-│   │   ├── services/          # parser / chunker / embedding / vector_store / retriever / llm_client / prompt_builder
+│   │   ├── services/          # parser / chunker / embedding / vector_store / retriever / bm25_retriever / hybrid_retriever / reranker / evaluator / llm_client / prompt_builder
 │   │   ├── crud/              # SQLite 元数据读写
 │   │   ├── models/            # ORM 模型（user/document/chunk/conversation/message）
 │   │   └── schemas/           # Pydantic API 契约
-│   └── tests/                 # 健康检查测试
+│   └── tests/                 # pytest 单测（CRUD / 认证 / 健康检查，18 个）
 ├── frontend/                  # Next.js 前端（登录/注册/文档管理/问答）
 ├── RAG知识库问答平台架构设计.md   # 架构设计文档
 ├── RAG知识库问答平台API接口规范.md # API 接口规范
@@ -74,10 +75,7 @@ cp .env.example .env
 uvicorn backend.app.main:app --reload --port 8000
 ```
 
-> 首次运行 bge-m3 会自动下载约 2.3GB 模型权重。国内网络需先设置镜像：
-> ```bash
-> export HF_ENDPOINT=https://hf-mirror.com
-> ```
+> 首次运行 bge-m3 会自动下载约 2.3GB 模型权重。国内网络直连 huggingface.co 即可（hf-mirror.com 镜像已失效、会重定向回官方，勿再设置）。
 
 ### 2. 前端
 
@@ -120,7 +118,7 @@ npm run dev     # http://localhost:3000
 |------|------|------|------|
 | `DEEPSEEK_API_KEY` | 是 | - | DeepSeek 密钥 |
 | `SECRET_KEY` | 是 | - | JWT 签名密钥 |
-| `DATABASE_URL` | 否 | `sqlite+aiosqlite:///./rag_qa.db` | 元数据库 |
+| `DATABASE_URL` | 否 | `sqlite+aiosqlite:///./db.sqlite` | 元数据库 |
 | `BASE_URL` | 否 | `https://api.deepseek.com` | LLM 端点 |
 | `DEEPSEEK_MODEL` | 否 | `deepseek-chat` | 模型名 |
 
