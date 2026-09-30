@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.models import Documents
@@ -39,9 +39,7 @@ async def find_document_by_file_name(db: AsyncSession, file_name: str, user_id: 
 
 
 # 查询当前用户的文件列表
-async def get_documents_list(
-    db: AsyncSession, user_id: int, page: int, page_size: int, limit: int = 100
-):
+async def get_documents_list(db: AsyncSession, user_id: int, page: int, page_size: int):
     query = (
         select(Documents)
         .where(Documents.user_id == user_id)
@@ -86,9 +84,7 @@ async def delete_document(db: AsyncSession, document_id: int):
 
 # 删除当前用户指定数量文件
 @crud_log(action="delete_documents_list")
-async def delete_documents_list(
-    db: AsyncSession, user_id: int
-):
+async def delete_documents_list(db: AsyncSession, user_id: int):
     await db.execute(delete(Documents).where(Documents.user_id == user_id))
     return
 
