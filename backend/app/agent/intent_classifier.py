@@ -61,19 +61,14 @@ class IntentClassifier:
         if text == "":
             return None
 
+        # 词表准入标准 P(命中→意图)≈1：只保留"命中即几乎确定意图"的强指向词；
+        # 弱信号疑问词（怎么/如何/为什么/哪些/？）命中后分不清是查询还是操作，交给 LLM 主判。
         query_keyword = [
             "什么是",
             "是什么",
-            "怎么样",
-            "如何",
-            "为什么",
             "讲讲",
             "介绍一下",
             "区别",
-            "怎么",
-            "哪些",
-            "?",
-            "？",
         ]
         if any(kw in text for kw in query_keyword):
             return "rag_query"
