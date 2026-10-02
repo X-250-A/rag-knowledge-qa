@@ -23,6 +23,7 @@ from backend.app.services import (
     initializing_client,
     parse_file,
 )
+from backend.app.services.bm25_retriever import invalidate
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 logger = logging.getLogger(__name__)
@@ -44,7 +45,14 @@ async def upload_documents(
     file_path = Path(UPLOAD_DIR) / file_name
     existing = await find_document_by_file_name(db=db, file_name=file_name, user_id=current_user.id)
     if existing:
-        raise ConflictError("Document already exists")
+        if existing.status == "failed":
+            client = initializing_client()
+            delete_collection(client=client, document_id=existing.id, user_id=current_user.id)
+            invalidate(user_id=existing.user_id)
+            await delete_document(document_id=existing.id, db=db)
+        else:
+            logger.warning(f"同名文档已存在（状态={existing.status}），拒绝重传: {file_name}")
+            raise ConflictError("Document already exists")
 
     with open(file_path, "wb") as f:
         f.write(await file.read())
@@ -68,7 +76,15 @@ async def upload_documents(
 
         return documents
     except Exception as e:
-        await update_document_status(db=db, document_id=documents.id, status="failed", commit=True)
+        try:
+            await update_document_status(
+                db=db, document_id=documents.id, status="failed", commit=True
+            )
+            file_path.unlink(missing_ok=True)
+            if file_path.exists():
+                logger.warning(f"{file_path}删除失败，可能被占用：{e}")
+        except Exception as clean_err:
+            logger.error(f"失败清理自身出错: {clean_err}")
         raise e
 
 
