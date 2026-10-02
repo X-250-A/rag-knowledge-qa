@@ -14,7 +14,7 @@ def add_collection(
     document_name: str = "",
     user_id: int = 0,
 ):
-    collection = client.get_or_create_collection("documents")
+    collection = client.get_or_create_collection("documents", metadata={"hnsw:space": "cosine"})
     # document_id 复用问题：SQLite 删文档后自增 id 会被重新分配，
     # 若 chroma 里还留着同 id 的旧记录，add 会撞 ID 静默失败/覆盖。
     # 写入前先清掉同 document_id 的残留，保证 ID 空间干净。

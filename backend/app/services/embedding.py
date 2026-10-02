@@ -26,4 +26,4 @@ def _get_model() -> SentenceTransformer:
 
 
 def get_embedding(chunks: list):
-    return _get_model().encode(chunks)
+    return _get_model().encode(chunks, normalize_embeddings=True)
