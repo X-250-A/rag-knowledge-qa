@@ -19,6 +19,7 @@ from backend.app.routers import (
 from backend.app.routers import (
     documents_router as document_router,
 )
+from backend.app.services import LlmClient
 
 setup_logging()
 
@@ -28,6 +29,7 @@ async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    await LlmClient.get_instance().aclose()
     await engine.dispose()
 
 

@@ -10,7 +10,7 @@ from backend.app.services import LlmClient, PromptBuilder
 
 class IntentClassifier:
     def __init__(self):
-        self.llm_client = LlmClient()
+        self.llm_client = LlmClient.get_instance()
         self.prompt_builder = PromptBuilder()
 
     # LLM意图识别

@@ -5,6 +5,14 @@ from backend.app.config import settings
 
 
 class LlmClient:
+    _instance: "LlmClient | None" = None
+
+    @classmethod
+    def get_instance(cls) -> "LlmClient":
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
     def __init__(self):
         http_client = httpx.AsyncClient(
             proxy=None,
@@ -16,6 +24,7 @@ class LlmClient:
                 pool=5,
             ),
         )
+        self.http_client = http_client
         self.client = AsyncOpenAI(
             # openai>=3.x 的 http_client 形参标注为 httpx2.AsyncClient，但运行时
             # 同样接受 httpx.AsyncClient（is_legacy_httpx_async_client 分支）；
@@ -50,3 +59,8 @@ class LlmClient:
             delta = chunk.choices[0].delta.content
             if delta:
                 yield delta
+
+    async def aclose(self):
+        if self.http_client is not None:
+            await self.http_client.aclose()
+            self.http_client = None

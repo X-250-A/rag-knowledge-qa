@@ -8,7 +8,7 @@ from backend.app.services import LlmClient, PromptBuilder, retrieve
 class RAGAgent:
     def __init__(self):
         self.prompt_builder = PromptBuilder()
-        self.llm_client = LlmClient()
+        self.llm_client = LlmClient.get_instance()
         self.intent_classifier = IntentClassifier()
 
     async def handle_message(self, user_input: str, conversation: ConversationManager):
