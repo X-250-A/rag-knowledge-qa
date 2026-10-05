@@ -6,15 +6,13 @@ from backend.app.db import get_db
 from backend.app.exceptions import NotFoundError
 from backend.app.models import User
 from backend.app.schemas import RegisterRequest
-from backend.app.utils import hash_password, verify_password, crud_log
-
+from backend.app.utils import crud_log, hash_password, verify_password
 
 
 # 通过id查找用户
 async def find_user_by_id(db: AsyncSession, user_id: int):
-    query = select(User).where(User.id == user_id)
-    result = await db.execute(query)
-    return result.scalar_one_or_none()
+    # 主键直取用 get（吃 identity map 缓存；语义与 scalar_one_or_none 等价）
+    return await db.get(User, user_id)
 
 
 # 通过用户名查找用户

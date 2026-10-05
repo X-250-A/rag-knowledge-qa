@@ -1,5 +1,3 @@
-
-
 # 对某条会话的增删改查
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -38,9 +36,8 @@ async def find_conversation_by_user_id(
 
 # 通过id查询指定会话
 async def find_conversation_by_conversation_id(db: AsyncSession, conversation_id: int):
-    query = select(Conversation).where(Conversation.id == conversation_id)
-    result = await db.execute(query)
-    return result.scalar_one_or_none()
+    # 主键直取用 get（吃 identity map 缓存；语义与 scalar_one_or_none 等价）
+    return await db.get(Conversation, conversation_id)
 
 
 # 删除指定会话
