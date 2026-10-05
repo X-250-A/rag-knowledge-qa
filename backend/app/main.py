@@ -8,17 +8,7 @@ from backend.app.exceptions import register_exception_handlers
 from backend.app.logging_config import setup_logging
 from backend.app.middleware import jwt_middleware, timing_middleware
 from backend.app.models import Base
-from backend.app.routers import (
-    auth_router,
-    chat_router,
-    health_router,
-)
-from backend.app.routers import (
-    conversations_router as conversation_router,
-)
-from backend.app.routers import (
-    documents_router as document_router,
-)
+from backend.app.routers import register_routers
 from backend.app.services import LlmClient
 
 setup_logging()
@@ -42,11 +32,7 @@ async def root():
     return {"message": "Hello World"}
 
 
-app.include_router(auth_router, prefix="/api")
-app.include_router(health_router, prefix="/api")
-app.include_router(chat_router, prefix="/api")
-app.include_router(document_router, prefix="/api")
-app.include_router(conversation_router, prefix="/api")
+register_routers(app)
 
 
 # 注意注册顺序：后添加的中间件在外层。必须把 CORSMiddleware 加在
