@@ -45,3 +45,9 @@ out/
 
 # pre-commit 测试残留缓存
 .pcache/
+
+# AOCI agent host integration (machine-bound; do not commit)
+.codex/config.toml
+.codex/config.toml.backup.*
+opencode.json
+opencode.json.backup.*
