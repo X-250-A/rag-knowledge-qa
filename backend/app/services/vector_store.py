@@ -1,6 +1,9 @@
 import chromadb
 import numpy as np
 
+# Chroma collection 名单一真源（建库/查询/删除/BM25 侧共用）
+COLLECTION_NAME = "documents"
+
 
 def initializing_client():
     return chromadb.PersistentClient(path="./chroma_db")
@@ -14,7 +17,7 @@ def add_collection(
     document_name: str = "",
     user_id: int = 0,
 ):
-    collection = client.get_or_create_collection("documents", metadata={"hnsw:space": "cosine"})
+    collection = client.get_or_create_collection(COLLECTION_NAME, metadata={"hnsw:space": "cosine"})
     # document_id 复用问题：SQLite 删文档后自增 id 会被重新分配，
     # 若 chroma 里还留着同 id 的旧记录，add 会撞 ID 静默失败/覆盖。
     # 写入前先清掉同 document_id 的残留，保证 ID 空间干净。
@@ -46,7 +49,7 @@ def add_collection(
 
 
 def query_collection(client, embedding: np.ndarray, top_k: int = 5, user_id: int | None = None):
-    collection = client.get_or_create_collection("documents")
+    collection = client.get_or_create_collection(COLLECTION_NAME)
     where = {"user_id": user_id} if user_id is not None else None
     query = collection.query(
         query_embeddings=embedding,
@@ -57,7 +60,7 @@ def query_collection(client, embedding: np.ndarray, top_k: int = 5, user_id: int
 
 
 def delete_collection(client, document_id: int, user_id: int | None = None):
-    collection = client.get_or_create_collection("documents")
+    collection = client.get_or_create_collection(COLLECTION_NAME)
     where: dict
     if document_id is not None and user_id is not None:
         # chroma 1.x 要求多条件必须显式 $and，直接并列两个键会 ValueError

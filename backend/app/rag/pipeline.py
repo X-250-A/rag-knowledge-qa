@@ -4,6 +4,7 @@ from backend.app.crud import (
     create_chunk,
     update_document_status,
 )
+from backend.app.models.document import DocumentStatus
 from backend.app.services import (
     add_collection,
     chunk_text,
@@ -12,12 +13,18 @@ from backend.app.services import (
     query_collection,
 )
 
+# 分块参数单一真源（chunk_size/overlap 同步用于 chunk_text 与 chunk 元数据）
+CHUNK_SIZE = 300
+CHUNK_OVERLAP = 50
+
 
 async def build(db: AsyncSession, text: str, document_id: int, document_name: str, user_id: int):
-    chunks = chunk_text(text, 300, 50)
+    chunks = chunk_text(text, CHUNK_SIZE, CHUNK_OVERLAP)
     try:
         # 开始分块
-        await update_document_status(db=db, document_id=document_id, status="chunking", commit=True)
+        await update_document_status(
+            db=db, document_id=document_id, status=DocumentStatus.CHUNKING, commit=True
+        )
         for seq_no, chunk in enumerate(chunks):
             await create_chunk(
                 db=db,
@@ -25,11 +32,17 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
                 seq_no=seq_no,
                 char_count=len(chunk),
                 content=chunk,
-                metadata={"strategy": "paragraph+sentence", "chunk_size": 300, "overlap": 50},
+                metadata={
+                    "strategy": "paragraph+sentence",
+                    "chunk_size": CHUNK_SIZE,
+                    "overlap": CHUNK_OVERLAP,
+                },
             )
 
         # 向量化并入库
-        await update_document_status(db=db, document_id=document_id, status="embedding", commit=True)
+        await update_document_status(
+            db=db, document_id=document_id, status=DocumentStatus.EMBEDDING, commit=True
+        )
         embedding = get_embedding(chunks)
         client = initializing_client()
         add_collection(
@@ -45,7 +58,7 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
             commit=True,
             db=db,
             document_id=document_id,
-            status="ready",
+            status=DocumentStatus.READY,
             chunk_count=len(chunks),
         )
         # BM25 索引是内存缓存，入库后必须失效，下次查询重建
@@ -55,7 +68,9 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
         return len(chunks)
 
     except Exception:
-        await update_document_status(db=db, document_id=document_id, status="failed", commit=True)
+        await update_document_status(
+            db=db, document_id=document_id, status=DocumentStatus.FAILED, commit=True
+        )
         raise
 
 

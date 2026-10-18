@@ -16,6 +16,7 @@ from backend.app.crud import (
 from backend.app.db import get_db
 from backend.app.exceptions import BadRequestError, ConflictError, NotFoundError
 from backend.app.models import User
+from backend.app.models.document import DocumentStatus
 from backend.app.rag.pipeline import build
 from backend.app.schemas.document import DocumentOut
 from backend.app.services import (
@@ -45,7 +46,7 @@ async def upload_documents(
     file_path = Path(UPLOAD_DIR) / file_name
     existing = await find_document_by_file_name(db=db, file_name=file_name, user_id=current_user.id)
     if existing:
-        if existing.status == "failed":
+        if existing.status == DocumentStatus.FAILED:
             client = initializing_client()
             delete_collection(client=client, document_id=existing.id, user_id=current_user.id)
             invalidate(user_id=existing.user_id)
@@ -72,13 +73,15 @@ async def upload_documents(
             document_name=documents.file_name,
             user_id=current_user.id,
         )
-        await update_document_status(db=db, document_id=documents.id, status="ready", commit=True)
+        await update_document_status(
+            db=db, document_id=documents.id, status=DocumentStatus.READY, commit=True
+        )
 
         return documents
     except Exception as e:
         try:
             await update_document_status(
-                db=db, document_id=documents.id, status="failed", commit=True
+                db=db, document_id=documents.id, status=DocumentStatus.FAILED, commit=True
             )
             file_path.unlink(missing_ok=True)
             if file_path.exists():

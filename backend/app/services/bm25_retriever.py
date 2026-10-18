@@ -1,10 +1,12 @@
 import logging
-import jieba
 
-jieba.setLogLevel(logging.WARNING)
+import jieba
 from rank_bm25 import BM25Okapi
 
 from backend.app.services import initializing_client
+from backend.app.services.vector_store import COLLECTION_NAME
+
+jieba.setLogLevel(logging.WARNING)
 
 # 模块加载时预载 jieba 词典，避免首次查询卡顿
 jieba.initialize()
@@ -62,7 +64,7 @@ def tokenize(text: str) -> list[str]:
 
 
 def load_corpus(client, user_id: int) -> list[dict]:
-    collection = client.get_or_create_collection("documents")
+    collection = client.get_or_create_collection(COLLECTION_NAME)
     data = collection.get(where={"user_id": user_id}, include=["documents", "metadatas"])
     chunks = [
         {"id": i, "content": d, "metadata": m}
