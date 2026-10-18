@@ -1,5 +1,6 @@
 from backend.app.agent.conversation import ConversationManager
 from backend.app.agent.intent_classifier import IntentClassifier
+from backend.app.schemas.intent import Intent
 from backend.app.services import LlmClient, PromptBuilder, retrieve
 
 """RAG核心Agent"""
@@ -23,10 +24,10 @@ class RAGAgent:
             )
 
         if intent is None:
-            intent = "rag_query"
+            intent = Intent.RAG_QUERY
 
         """根据意图处理消息，yield 事件供 SSE 消费"""
-        if intent == "rag_query":
+        if intent == Intent.RAG_QUERY:
             chunk = retrieve(question=user_input, user_id=conversation.user_id)
             messages = self.prompt_builder.build_prompt(question=user_input, content_chunks=chunk)
             if messages is None:
@@ -46,7 +47,7 @@ class RAGAgent:
             await conversation.add_message(role="assistant", content="".join(collected))
             yield {"type": "done", "conversation_id": conversation.conversation_id}
 
-        elif intent == "chitchat":
+        elif intent == Intent.CHITCHAT:
             collected = []
             async for delta in self.llm_client.stream_chat(conversation.history_cache):
                 collected.append(delta)
@@ -54,7 +55,7 @@ class RAGAgent:
             await conversation.add_message(role="assistant", content="".join(collected))
             yield {"type": "done", "conversation_id": conversation.conversation_id}
 
-        elif intent == "document_management":
+        elif intent == Intent.DOCUMENT_MANAGEMENT:
             yield {"type": "delta", "text": "请转入文档管理页处理文档相关操作"}
             yield {"type": "done", "conversation_id": conversation.conversation_id}
 

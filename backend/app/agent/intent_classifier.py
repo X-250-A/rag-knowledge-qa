@@ -1,10 +1,12 @@
 import json
 
 from openai.types.chat import ChatCompletionMessageParam
+from pydantic import ValidationError
 
 from backend.app.agent.conversation import ConversationManager
 from backend.app.config import settings
 from backend.app.logging_config import logger
+from backend.app.schemas.intent import Intent, IntentResult
 from backend.app.services import LlmClient, PromptBuilder
 
 
@@ -17,7 +19,7 @@ class IntentClassifier:
     async def llm_intent_classifier(self, conversation: ConversationManager, user_input: str):
         # 构造messages存上下文
         messages: list[ChatCompletionMessageParam] = [
-            {"role": "system", "content": self.prompt_builder.llm_intents_classifier_prompt},
+            {"role": "system", "content": self.prompt_builder.build_intents_classifier_prompt()},
         ]
 
         # 查上下文
@@ -46,11 +48,14 @@ class IntentClassifier:
             if content is None:
                 return None
 
+            # 先 json.loads（JSON 语法坏=系统级失败 → None，区别于值非法），
+            # 再 model_validate 校验意图值域（非法 → unclear，语义级兜底）。
+            # 两种失败语义分开：RAG_agent 对 None 兜底为 rag_query，对 unclear 走 else 分支。
             result = json.loads(content)
-            intent = result.get("intent")
-            if intent not in ("rag_query", "chitchat", "document_management", "out_of_scope"):
-                return "unclear"
-            return intent
+            return IntentResult.model_validate(result).intent
+        except ValidationError as e:
+            logger.warning("意图值非法，归为 unclear：%s", e)
+            return "unclear"
         except Exception as e:
             logger.exception("LLM 意图分类失败：%s", e)
             return None
@@ -71,7 +76,7 @@ class IntentClassifier:
             "区别",
         ]
         if any(kw in text for kw in query_keyword):
-            return "rag_query"
+            return Intent.RAG_QUERY
 
         chichat_keyword = [
             "你好",
@@ -90,7 +95,7 @@ class IntentClassifier:
             "嗯嗯",
         ]
         if any(kw in text for kw in chichat_keyword):
-            return "chitchat"
+            return Intent.CHITCHAT
 
         document_keyword = [
             "删除",
@@ -109,7 +114,7 @@ class IntentClassifier:
             "覆盖",
         ]
         if any(kw in text for kw in document_keyword):
-            return "document_management"
+            return Intent.DOCUMENT_MANAGEMENT
 
         # 没命中任何强信号关键词：交给 LLM 判定，不要擅自判 out_of_scope
         return None
