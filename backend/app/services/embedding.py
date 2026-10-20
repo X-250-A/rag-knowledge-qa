@@ -9,6 +9,9 @@ os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 from sentence_transformers import SentenceTransformer
 
+# 嵌入模型名单一真源（换模型只改这里）
+EMBEDDING_MODEL_NAME = "BAAI/bge-m3"
+
 # 惰性加载：import 本模块不再触发 2.3GB 权重下载/加载，
 # 首次调用 get_embedding 才初始化。这让测试可以只 mock get_embedding
 # 而无需真的碰模型，也让模块导入在无网环境（CI lint job）下安全。
@@ -21,7 +24,8 @@ def _get_model() -> SentenceTransformer:
     if model is None:
         with _lock:
             if model is None:
-                model = SentenceTransformer("BAAI/bge-m3")
+                model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+                model.half()
     return model
 
 

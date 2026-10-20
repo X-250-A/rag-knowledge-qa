@@ -25,7 +25,9 @@ def _get_model():
         with _lock:
             if _model is None:
                 _model = CrossEncoder(MODEL_NAME)
+                _model.half()
     return _model
+
 
 def rerank(query: str, hits: list[dict], top_k: int) -> list[dict]:
     """对 hits（RRF 融合后的召回列表）精排，返回前 top_k。
