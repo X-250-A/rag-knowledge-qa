@@ -5,6 +5,13 @@ from pydantic_settings import BaseSettings
 
 MARKER = "change-me-to-your-key"
 
+# 检索默认返回条数（跨检索层签名统一默认值的单一真源）
+DEFAULT_TOP_K: int = 5
+
+# 分块参数单一真源（chunk_text 与 chunk 元数据共用；测试也随此真源）
+CHUNK_SIZE: int = 300
+CHUNK_OVERLAP: int = 50
+
 
 class Settings(BaseSettings):
     model_config = {

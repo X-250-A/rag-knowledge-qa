@@ -1,0 +1,573 @@
+{
+  "meta": {
+    "topic": "数据结构与算法（OI Wiki）",
+    "source_docs": [
+      "avl.md",
+      "bfs.md",
+      "binary-heap.md",
+      "bst.md",
+      "dfs.md",
+      "dsu.md",
+      "fenwick.md",
+      "hash.md",
+      "lca.md",
+      "linked-list.md",
+      "mst.md",
+      "queue.md",
+      "rbtree.md",
+      "seg.md",
+      "shortest-path.md",
+      "skiplist.md",
+      "sparse-table.md",
+      "stack.md",
+      "topo.md",
+      "treap.md"
+    ],
+    "top_k_default": 5,
+    "eval_user": 12,
+    "chunk_size": 300,
+    "note": "基于 OI Wiki 开源文档生成，chunk_seq 由 chunk_text(300,50) 直接定位；经 Qoder 审查修复后共 60 题"
+  },
+  "questions": [
+    {
+      "id": "OW-01",
+      "question": "根据文档内容，BFS 的全称和中文名分别是什么？",
+      "document_name": "bfs.md",
+      "chunk_seq": 1,
+      "category": "fact",
+      "reference_answer": "BFS 全称是 Breadth First Search，中文名是宽度优先搜索，也叫广度优先搜索。",
+      "anchor": "/Breadth-first_search)，中文名是宽度优先搜索，也叫广度优先"
+    },
+    {
+      "id": "OW-04",
+      "question": "根据文档内容，二叉搜索树是一种什么类型的数据结构？",
+      "document_name": "bst.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "二叉搜索树是一种二叉树的树形数据结构。",
+      "anchor": "二叉搜索树是一种二叉树的树形数据结构，其定义如下："
+    },
+    {
+      "id": "OW-07",
+      "question": "请根据文档内容，说明DFS的全称、中文名称，以及其“深度优先”的含义。",
+      "document_name": "dfs.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "DFS全称是Depth First Search，中文名是深度优先搜索，是一种用于遍历或搜索树或图的算法。所谓深度优先，就是说每次都尝试向更深的节点走。",
+      "anchor": "epth-first_search)，中文名是深度优先搜索，是一种用于遍历或搜索树或图的算法．所谓深度优先，就是说每次都"
+    },
+    {
+      "id": "OW-08",
+      "question": "在 DFS 和 BFS 的实现中，根据文档，深度优先搜索使用的节点暂存容器是什么？",
+      "document_name": "dfs.md",
+      "chunk_seq": 16,
+      "category": "confusion",
+      "reference_answer": "DFS 使用栈（Stack）作为遍历中节点的暂存容器；这与用队列（Queue）实现的 BFS 形成高度对应。",
+      "anchor": "DFS 可以使用 [栈（Stack）](../ds/stack.md) 为遍历中节点的暂存容器来实现；这与用 [队列（Queue）](../ds/queue.m"
+    },
+    {
+      "id": "OW-10",
+      "question": "根据文档，并查集是一种用于管理什么的数据结构？它是如何实现的？其中树和节点分别代表什么？",
+      "document_name": "dsu.md",
+      "chunk_seq": 3,
+      "category": "fact",
+      "reference_answer": "并查集是一种用于管理元素所属集合的数据结构，实现为一个森林。其中每棵树表示一个集合，树中的节点表示对应集合中的元素。",
+      "anchor": "并查集是一种用于管理元素所属集合的数据结构，实现为一个森林，其中每棵树表示一个集合，树中的节点表示对应集合中的元素．"
+    },
+    {
+      "id": "OW-13",
+      "question": "根据文档内容，树状数组支持哪些操作，且具有什么特点？",
+      "document_name": "fenwick.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "树状数组支持单点修改和区间查询，并且代码量小。",
+      "anchor": "树状数组是一种支持 **单点修改** 和 **区间查询** 的，代码量小的数据结构．"
+    },
+    {
+      "id": "OW-16",
+      "question": "根据文中描述，哈希表是一种以什么形式存储数据的数据结构？其键值 key 具有什么特点？",
+      "document_name": "hash.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "哈希表又称散列表，是一种以「key-value」形式存储数据的数据结构。任意的键值 key 都唯一对应到内存中的某个位置，输入查找的键值即可快速找到对应的 value。",
+      "anchor": "哈希表又称散列表，一种以「key-value」形式存储数据的数据结构．所谓以「key-value」形式存储数据，是指任意的键值 key 都唯一对应到内存中的某个"
+    },
+    {
+      "id": "OW-19",
+      "question": "根据文档内容，两个节点的最近公共祖先（LCA）是如何定义的？",
+      "document_name": "lca.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "两个节点的最近公共祖先，就是这两个点的公共祖先里面，离根最远的那个。",
+      "anchor": "两个节点的最近公共祖先，就是这两个点的公共祖先里面，离根最远的那个．"
+    },
+    {
+      "id": "OW-22",
+      "question": "链表这种数据结构的特点是什么？",
+      "document_name": "linked-list.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "链表通过如链条一般的指针来连接元素，特点是插入与删除数据十分方便，但寻找与读取数据的表现欠佳。",
+      "anchor": "链表是一种用于存储数据的数据结构，通过如链条一般的指针来连接元素．它的特点是插入与删除数据十分方便，但寻找与读取数据的表现欠佳．"
+    },
+    {
+      "id": "OW-25",
+      "question": "Kruskal 算法求最小生成树的基本思想是什么？",
+      "document_name": "mst.md",
+      "chunk_seq": 7,
+      "category": "fact",
+      "reference_answer": "Kruskal 算法的基本思想是从小到大加入边，是一个贪心算法。",
+      "anchor": "最小生成树算法，由 Kruskal 发明．该算法的基本思想是从小到大加入边，是个"
+    },
+    {
+      "id": "OW-26",
+      "question": "在实现最小生成树算法时，如果代码中已经通过维护 dis 值成功计算出了最小生成树的总权重，而现在想要进一步输出树的具体构成（即哪些边被选中），那么仅凭现有的 dis 值信息是否足够？为什么？",
+      "document_name": "mst.md",
+      "chunk_seq": 48,
+      "category": "long_tail",
+      "reference_answer": "不够。因为现有代码只记录了每个顶点到当前树的最小权值（dis），这个值仅表示权重数值，无法表明该权值对应的是哪一条具体边。若要输出最小生成树的边方案，必须在更新 dis 时同时记录每个点的 dis 所代表的边（即该权值对应的那条边）。",
+      "anchor": "注意：上述代码只是求出了最小生成树的权值，如果要输出方案还需要记录每个点的 $dis$ 代表的是哪条边．"
+    },
+    {
+      "id": "OW-28",
+      "question": "根据上述内容，队列是一种具有什么性质的表？它通常被称为什么？",
+      "document_name": "queue.md",
+      "chunk_seq": 3,
+      "category": "fact",
+      "reference_answer": "队列是一种具有“先进入队列的元素一定先出队列”性质的表。由于该性质，队列通常被称为先进先出表，简称FIFO表。",
+      "anchor": "队列（queue）是一种具有「先进入队列的元素一定先出队列」性质的表．由于该性质，队列通常也被称为先进先出（first in first out）表，简称 FI"
+    },
+    {
+      "id": "OW-31",
+      "question": "红黑树是一种什么类型的树？它通过什么机制来确保插入和删除时保持平衡？",
+      "document_name": "rbtree.md",
+      "chunk_seq": 1,
+      "category": "fact",
+      "reference_answer": "红黑树是一种自平衡的二叉搜索树。它通过在每个节点额外存储一个颜色字段（RED或BLACK）来确保树在插入和删除时保持平衡。",
+      "anchor": "红黑树是一种自平衡的二叉搜索树．每个节点额外存储了一个 color 字段 (\"RED\" or \"BLACK\")，用于确保树在插入和删除时保持平衡．"
+    },
+    {
+      "id": "OW-33",
+      "question": "在学习红黑树时，有一种多路搜索树常被用作参照，以帮助理解其插入和删除过程。请问这种树是什么？",
+      "document_name": "rbtree.md",
+      "chunk_seq": 85,
+      "category": "long_tail",
+      "reference_answer": "根据文档，可以通过对比 2-3-4 树来理解红黑树的插入和删除操作。",
+      "anchor": "可以通过对比 2-3-4 树来理解红黑树的插入和删除操作．"
+    },
+    {
+      "id": "OW-34",
+      "question": "线段树在算法竞赛中常用于维护什么？",
+      "document_name": "seg.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "线段树是算法竞赛中常用的用来维护区间信息的数据结构。",
+      "anchor": "线段树是算法竞赛中常用的用来维护 **区间信息** 的数据结构．"
+    },
+    {
+      "id": "OW-35",
+      "question": "在区间修改映射的代数约束中，对于表示空区间的特殊元素，其经过修改映射后的像被要求保持该元素本身的同一性。请根据原文约定，写出这一约束对应的符号等式。",
+      "document_name": "seg.md",
+      "chunk_seq": 66,
+      "category": "long_tail",
+      "reference_answer": "原文约定为：空区间信息修改后仍然是空区间信息，即 π(e)=e，其中 e 表示空区间信息。",
+      "anchor": "3.  特别地，规定空区间信息修改后仍然是空区间信息，即 $\\pi(e)=e$．"
+    },
+    {
+      "id": "OW-37",
+      "question": "对于边权为正的图，为什么任意两个结点之间的最短路不会经过重复的结点？",
+      "document_name": "shortest-path.md",
+      "chunk_seq": 8,
+      "category": "long_tail",
+      "reference_answer": "文档指出：对于边权为正的图，任意两个结点之间的最短路不会经过重复的结点（也不会经过重复的边）。因为若路径含环则必为正权环，去掉环可得到更短路径。",
+      "anchor": "对于边权为正的图，任意两个结点之间的最短路，不会经过重复的结点．"
+    },
+    {
+      "id": "OW-39",
+      "question": "在带负权边的图中，Dijkstra 算法无法正确求解最短路。根据文档所述，为解决此问题需要对“原图上的边”进行预处理，那么该预处理最终需要达到什么效果？",
+      "document_name": "shortest-path.md",
+      "chunk_seq": 97,
+      "category": "long_tail",
+      "reference_answer": "对原图上的边进行预处理，确保所有边的边权均非负。",
+      "anchor": "但 Dijkstra 算法不能正确求解带负权边的最短路，因此我们需要对原图上的边进行预处理，确保所有边的边权均非负．"
+    },
+    {
+      "id": "OW-40",
+      "question": "跳表是由谁发明的？它支持哪些操作？",
+      "document_name": "skiplist.md",
+      "chunk_seq": 0,
+      "category": "fact",
+      "reference_answer": "跳表是由 William Pugh 发明的，它支持对数据的快速查找、插入和删除。",
+      "anchor": "跳表 (Skip List) 是由 William Pugh 发明的一种查找数据结构，支持对数据的快速查找，插入和删除．"
+    },
+    {
+      "id": "OW-43",
+      "question": "根据文档内容，栈在 OI 中被描述为什么类型的数据结构？本文主要讨论的是栈的哪种含义？",
+      "document_name": "stack.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "栈在 OI 中被描述为常用的一种线性数据结构；本文主要讨论的是栈这种数据结构，而非程序运行时的系统栈/栈空间。",
+      "anchor": "请注意，本文主要讲的是栈这种数据结构，而非程序运行时的系统栈/栈空间．"
+    },
+    {
+      "id": "OW-46",
+      "question": "拓扑排序要解决的问题是什么？",
+      "document_name": "topo.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "reference_answer": "拓扑排序要解决的问题是如何给一个有向无环图的所有节点排序。",
+      "anchor": "拓扑排序（Topological sorting）要解决的问题是如何给一个有向无环图的所有节点排序．"
+    },
+    {
+      "id": "OW-47",
+      "question": "根据文档描述的算法，在每一步开始时，应当从图中选择一个具有什么特征的顶点？",
+      "document_name": "topo.md",
+      "chunk_seq": 17,
+      "category": "confusion",
+      "reference_answer": "从图中选择一个入度为零的点，然后输出该顶点，并从图中删除此顶点及其所有的出边。",
+      "anchor": "2.  输出该顶点，从图中删除此顶点及其所有的出边．"
+    },
+    {
+      "id": "OW-49",
+      "question": "根据文档内容，学习 Treap 需要具备哪些前置知识？",
+      "document_name": "treap.md",
+      "chunk_seq": 1,
+      "category": "fact",
+      "reference_answer": "需要具备朴素二叉搜索树和堆基础这两方面的前置知识。",
+      "anchor": "前置知识：[朴素二叉搜索树](./bst.md)，[堆基础](./heap.md)．"
+    },
+    {
+      "id": "OW-51",
+      "question": "在递归建树时每次选取当前区间中点作为树根的 treap 构建方法中，随机优先级所承担的角色是什么？",
+      "document_name": "treap.md",
+      "chunk_seq": 169,
+      "category": "confusion",
+      "reference_answer": "该方法中，随机优先级并不是用来保证树高或维护堆的性质的；树高由每次选取区间中点来保证。随机优先级的作用是使无旋式 treap 的 merge 操作更加随机一点。",
+      "anchor": "这样也是正确的，因为无旋式 treap 的优先级是用来使 `merge` 操作更加随机一点，而不是用来保证树高的．"
+    },
+    {
+      "id": "OW-52",
+      "question": "根据文档，BFS 算法找到的路径具有什么性质？",
+      "document_name": "bfs.md",
+      "chunk_seq": 4,
+      "category": "fact",
+      "reference_answer": "BFS 算法找到的路径是从起点开始的最短合法路径，即这条路径所包含的边数最小。在 BFS 结束时，每个节点都是通过从起点到该点的最短路径访问的。",
+      "anchor": "这样做的结果是，BFS 算法找到的路径是从起点开始的 **最短** 合法路径．"
+    },
+    {
+      "id": "OW-53",
+      "question": "在非连通图的遍历过程中，若从某一点出发，访问范围是否会超出该点所在的连通分量？请依据原文说明访问范围限制。",
+      "document_name": "bfs.md",
+      "chunk_seq": 28,
+      "category": "long_tail",
+      "reference_answer": "根据原文，如果原图不连通，只能访问到从起点出发能够到达的点；起点所在的连通分量内的所有点都与起点连通，因此访问范围不会超出起点所在的连通分量，即只覆盖从起点可达的顶点。",
+      "anchor": "如果原图不连通，只能访问到从起点出发能够到达的点．"
+    },
+    {
+      "id": "OW-54",
+      "question": "根据本篇文档对二叉搜索树的定义，节点集合为空的那棵树属于二叉搜索树吗？",
+      "document_name": "bst.md",
+      "chunk_seq": 3,
+      "category": "fact",
+      "reference_answer": "属于。文档的定义列表第一条即指出“空树是二叉搜索树”，因此空二叉树是二叉搜索树家族中的一员。",
+      "anchor": "1.  空树是二叉搜索树．"
+    },
+    {
+      "id": "OW-55",
+      "question": "在包含重复键的二叉搜索树中，节点含有 `count` 字段表示同一键值出现次数。使用 `queryRank` 函数查询键值 `v`，当遇到 `root->key == v` 时，函数直接返回 `(root->left ? root->left->size : 0) + 1`，而不再继续向右子树搜索。那么若树中有多个键值等于 `v` 的节点，这个返回值在全局排名中对应的是这些重复键中的最小排名、最大排名，还是其他含义？请根据代码逻辑解释该返回值为什么能作为最终结果。",
+      "document_name": "bst.md",
+      "chunk_seq": 62,
+      "category": "confusion",
+      "reference_answer": "根据代码，当 `root->key == v` 时，返回的是左子树节点总数加 1。在中序遍历中，左子树所有节点都小于 `v`，因此这个值表示第一个等于 `v` 的节点在全局升序序列中的位置，也就是所有等于 `v` 的节点中的最小排名（第一次出现的位置）。函数没有继续遍历右子树来统计更多等于 `v` 的节点，所以该返回值不会变成最大排名。当 `v` 大于当前节点时，递归右子树并累加左子树大小和 `root->count`，确保所有小于 `v` 的节点都被计入；当 `v` 小于当前节点时，只递归左子树。最终若 `v` 存在，则该返回值就是 `v` 的最小排名。",
+      "anchor": "? root->left->size : 0) + 1;\n      if (root->key > v) return queryRank(root->le"
+    },
+    {
+      "id": "OW-56",
+      "question": "在算法讲解中，深度优先搜索（DFS）和广度优先搜索（BFS）常被并列讨论。关于这两种算法除了都能遍历图的连通块之外的关系，文中提出的核心观点是什么？",
+      "document_name": "dfs.md",
+      "chunk_seq": 3,
+      "category": "confusion",
+      "reference_answer": "文中指出，DFS与BFS除了都能遍历图的连通块以外，用途完全不同，很少有能混用两种算法的情况。",
+      "anchor": "该算法讲解时常常与 BFS 并列，但两者除了都能遍历图的连通块以外，用途完全不同，很少有能混用两种算法的情况．"
+    },
+    {
+      "id": "OW-57",
+      "question": "根据文档，并查集“顾名思义”支持的操作数量是几个？",
+      "document_name": "dsu.md",
+      "chunk_seq": 4,
+      "category": "fact",
+      "reference_answer": "文档开篇即指出“顾名思义，并查集支持两种操作”，即并查集支持两种操作。",
+      "anchor": "顾名思义，并查集支持两种操作："
+    },
+    {
+      "id": "OW-58",
+      "question": "在并查集边上维护权值并利用路径压缩处理某些问题时，对于模数很小的情形，文中提到了一种不直接在边权上做运算、而是通过改变并查集点结构的解决方式。请问这种方式在文中被称为什么？",
+      "document_name": "dsu.md",
+      "chunk_seq": 49,
+      "category": "confusion",
+      "reference_answer": "文中称这种“将并查集的单个点拆分为多个状态”的技巧为“种类并查集”或“拓展域并查集”。",
+      "anchor": "意义下的加法群．对于这类维护模意义下边权且模数很小的问题，还可以通过将并查集的单个点拆分为多个状态的方式来解决．这种特殊情形下的技巧，也称为「种类并查集」或「"
+    },
+    {
+      "id": "OW-59",
+      "question": "普通树状数组不能直接用于维护以下哪种信息？（A）区间和（B）区间异或和（C）区间最小值（D）区间乘积",
+      "document_name": "fenwick.md",
+      "chunk_seq": 5,
+      "category": "confusion",
+      "reference_answer": "根据文档，普通树状数组维护的信息及运算必须满足结合律且可差分，如加法（和）、乘法（积）、异或等。区间最小值运算虽然满足结合律，但不可差分，因此不满足普通树状数组的维护要求，不能直接用普通树状数组维护。",
+      "anchor": "普通树状数组维护的信息及运算要满足 **结合律** 且 **可差分**，如加法（和）、乘法（积）、异或等．"
+    },
+    {
+      "id": "OW-60",
+      "question": "文中提到的“手机尾号”、身份证号码后四位都是哈希函数的例子。根据这段文字，判断一个函数是否属于哈希函数的最核心依据是什么？",
+      "document_name": "hash.md",
+      "chunk_seq": 4,
+      "category": "confusion",
+      "reference_answer": "根据文中定义，哈希函数（也称散列函数）是“根据键值计算索引的函数”。因此，最核心依据是看它是否完成从键值到索引的映射，而不是看它是否易于计算或是否使索引均匀分布——后者只是对哈希函数的额外要求。",
+      "anchor": "这个根据键值计算索引的函数就叫做哈希函数，也称散列函数．举个例子，如果键值是一个人的身份证号码，哈希函数就可以是号码的后四位，当然也可以是号码的前四位．生活中常"
+    },
+    {
+      "id": "OW-61",
+      "question": "在 C 语言的图论实现中，前向星结构常使用类似 `next` 的字段来串起同一起点的边。请观察题给的 `struct data` 定义，写出其中承担这一角色的字段名（注意拼写）。",
+      "document_name": "hash.md",
+      "chunk_seq": 22,
+      "category": "confusion",
+      "reference_answer": "根据 chunk，该结构体定义为 `struct data { long long u; int v, nex; };`，其中第三个成员名是 `nex`（类型为 int），它就是前向星中用于指向下一条边的字段，而非常见的 `next`。",
+      "anchor": "struct data {\n    long long u;\n    int v, nex;\n  };  // 前向星结构"
+    },
+    {
+      "id": "OW-62",
+      "question": "倍增算法求 LCA 的预处理时间复杂度和单次查询时间复杂度分别是多少？",
+      "document_name": "lca.md",
+      "chunk_seq": 21,
+      "category": "long_tail",
+      "reference_answer": "倍增算法的预处理时间复杂度为 O(n log n)，单次查询时间复杂度为 O(log n)。",
+      "anchor": "倍增算法的预处理时间复杂度为 $O(n \\log n)$，单次查询时间复杂度为"
+    },
+    {
+      "id": "OW-63",
+      "question": "在将LCA问题转化为RMQ问题的预处理过程中，仅使用DFS生成欧拉序列这一步的耗时是多少？",
+      "document_name": "lca.md",
+      "chunk_seq": 44,
+      "category": "confusion",
+      "reference_answer": "用DFS计算欧拉序列的时间复杂度是O(n)，且欧拉序列的长度也是O(n)，因此LCA问题可以在O(n)时间内转化成等规模的RMQ问题。",
+      "anchor": "用 DFS 计算欧拉序列的时间复杂度是 $O(n)$，且欧拉序列的长度也是 $O(n)$，所以 LCA 问题可以在 $O(n)$ 的时间内转化成等规模的 RMQ 问题．"
+    },
+    {
+      "id": "OW-64",
+      "question": "文档中提到，数组与链表都可用来存储数据，并且数组会按顺序依次存放所有元素。请根据该内容说明：这种存储结构上的差异，使得数组与链表在功能特性上出现了怎样的结果？",
+      "document_name": "linked-list.md",
+      "chunk_seq": 4,
+      "category": "long_tail",
+      "reference_answer": "数组将所有元素按次序依次存储；与链表不同，不同的存储结构令它们有了不同的优势。因此，存储结构的差异导致数组和链表各自具有不同的优势。",
+      "anchor": "与链表不同，数组将所有元素按次序依次存储．"
+    },
+    {
+      "id": "OW-65",
+      "question": "链表在随机访问和插入删除上的操作次数分别是多少？为什么与数组形成互补？",
+      "document_name": "linked-list.md",
+      "chunk_seq": 5,
+      "category": "confusion",
+      "reference_answer": "链表删除、插入数据操作次数是 O(1)，但寻找、读取数据效率不如数组，随机访问操作次数是 O(n)；数组随机访问是 O(1) 但插入删除是 O(n)，两者形成互补。",
+      "anchor": "链表因其链状的结构，能方便地删除、插入数据，操作次数是 $O(1)$．但也因为这样，寻找、读取数据的效率不如数组高，在随机访问数据中的操作次数是 $O(n)$．"
+    },
+    {
+      "id": "OW-66",
+      "question": "在数据结构中，使用数组模拟某种线性结构时，通常用两个变量标记该结构的首尾。该结构是什么？这两个变量又分别标记该结构的哪两个位置？",
+      "document_name": "queue.md",
+      "chunk_seq": 6,
+      "category": "confusion",
+      "reference_answer": "根据原文，该结构是队列；用两个变量标记队列的首尾，分别对应队首和队尾。",
+      "anchor": "通常用一个数组模拟一个队列，用两个变量标记队列的首尾．"
+    },
+    {
+      "id": "OW-67",
+      "question": "栈只允许在一端操作，普通队列在一端入队另一端出队。若某种队列结合了这两者的能力，既能在队首插入/删除，又能在队尾插入/删除，那么这种数据结构通常被称为什么？",
+      "document_name": "queue.md",
+      "chunk_seq": 30,
+      "category": "confusion",
+      "reference_answer": "双端队列，是一种可以在队首/队尾插入或删除元素的队列，相当于栈与队列功能的结合，支持的操作有4个。",
+      "anchor": "双端队列是指一个可以在队首/队尾插入或删除元素的队列．"
+    },
+    {
+      "id": "OW-68",
+      "question": "有资料将红黑树描述为 2-3-4 树的等价形式，也有资料将其描述为 4 阶 B 树的变体。请根据给定文档，说明红黑树、4 阶 B 树与 2-3-4 树之间的准确关系。",
+      "document_name": "rbtree.md",
+      "chunk_seq": 2,
+      "category": "confusion",
+      "reference_answer": "文档指出，红黑树是 4 阶 B 树的变体，而 4 阶 B 树就是 2-3-4 树。因此红黑树是 2-3-4 树的变体，不能简单地说红黑树等价于 2-3-4 树本身。",
+      "anchor": "红黑树是 4 阶 B 树（[2-3-4 树](https://en.wikipe"
+    },
+    {
+      "id": "OW-69",
+      "question": "在“为了方便叙述，这里先给出下文将会用到的一些记号的含义”一句中，“先”字体现了“这里”与“下文”之间怎样的关系？",
+      "document_name": "shortest-path.md",
+      "chunk_seq": 5,
+      "category": "long_tail",
+      "reference_answer": "“先”表示时间或顺序上的先后：“这里”在前，先给出记号的含义；“下文”在后，即后续使用这些记号进行叙述的部分。也就是记号的含义定义在“这里”，而“下文”中会用到这些记号。",
+      "anchor": "为了方便叙述，这里先给出下文将会用到的一些记号的含义．"
+    },
+    {
+      "id": "OW-70",
+      "question": "跳表的查询、插入和删除操作的期望时间复杂度均为O(log n)，那么该数据结构在期望情况下的空间复杂度也是O(log n)吗？请根据文档内容回答它是什么。",
+      "document_name": "skiplist.md",
+      "chunk_seq": 1,
+      "category": "confusion",
+      "reference_answer": "根据文档，跳表的期望空间复杂度为O(n)，并非O(log n)。查询、插入和删除操作的期望时间复杂度为O(log n)，而空间复杂度与时间复杂度不同，空间开销随元素个数线性增长。",
+      "anchor": "跳表的期望空间复杂度为 $O(n)$，跳表的查询，插入和删除操作的期望时间复杂度都为 $O(\\log n)$．"
+    },
+    {
+      "id": "OW-71",
+      "question": "在跳表的插入操作中，为了避免对链表头尾节点进行特殊判断，通常也需要像查询操作那样设置两个哨兵节点。请问，根据原文，这一说法是否正确？",
+      "document_name": "skiplist.md",
+      "chunk_seq": 29,
+      "category": "confusion",
+      "reference_answer": "不正确。原文仅指出“查询跳表中是否存在键值为 key 的节点”这一具体实现时，可以设置两个哨兵节点以减少边界条件的讨论；并未提及插入操作也需要设置两个哨兵节点。",
+      "anchor": "具体实现时，可以设置两个哨兵节点以减少边界条件的讨论．"
+    },
+    {
+      "id": "OW-72",
+      "question": "文档中所谓的后进先出原则，约束的是栈的哪类行为？",
+      "document_name": "stack.md",
+      "chunk_seq": 3,
+      "category": "confusion",
+      "reference_answer": "文档指出，栈的修改与访问是按照后进先出的原则进行的，因此栈被称为LIFO表；也就是说，后进先出原则约束的是栈的修改与访问行为。",
+      "anchor": "栈的修改与访问是按照后进先出的原则进行的，因此栈通常被称为是后进先出（last"
+    },
+    {
+      "id": "OW-73",
+      "question": "根据文档，std::stack 除了基本操作外还支持若干运算符，其中被特别提及并常用于将一个 stack 对象的内容复制到另一个 stack 对象的运算符是哪一个？",
+      "document_name": "stack.md",
+      "chunk_seq": 15,
+      "category": "long_tail",
+      "reference_answer": "文档指出 std::stack 还提供了一些运算符，其中较为常用的是赋值运算符 =，用于为 stack 赋值。",
+      "anchor": "此外，`std::stack` 还提供了一些运算符．"
+    },
+    {
+      "id": "OW-74",
+      "question": "根据chunk中的课程排课例子，判断下列说法是否正确：修读『编译技术』之前只需要先修完『离散数学』。请结合原文说明理由。",
+      "document_name": "topo.md",
+      "chunk_seq": 3,
+      "category": "confusion",
+      "reference_answer": "不正确。原文虽然提到“学习完离散数学后就获得了学习编译技术的前置条件”，但紧接着又指出“编译技术还有一个更加前的课程算法语言”，因此编译技术的先修课程至少包括离散数学和算法语言，只修完离散数学不足以修读编译技术。",
+      "anchor": "须先学会「离散数学」，学习完这门课后就获得了学习「编译技术」的前置条件．当然，「编译技术」还有一个更加前的课程「算法语言"
+    },
+    {
+      "id": "OW-75",
+      "document_name": "fenwick.md",
+      "chunk_seq": 18,
+      "category": "confusion",
+      "question": "树状数组能在 O(log n) 时间内求出前缀和，根本原因是什么？",
+      "reference_answer": "任意前缀 [1, n] 总可以被拆成不多于 log n 段区间，且这 log n 段区间的信息树状数组都能直接给出，只需合并这些段的信息，相比直接合并 n 个原值效率大大提高。",
+      "anchor": "这就是树状数组能快速求解信息的原因：我们总能将一段前缀 $[1, n]$ 拆成 **不多于 $\\boldsymbol{\\log n}$ 段区间**，使得这 $\\log n$ 段区间的信息是 **已知的**．"
+    },
+    {
+      "id": "OW-76",
+      "document_name": "mst.md",
+      "chunk_seq": 5,
+      "category": "confusion",
+      "question": "对于一个非连通的无向图，能否找到它的最小生成树？为什么？",
+      "reference_answer": "不能。只有连通图才存在生成树；非连通图只存在生成森林，即每个连通分量各自对应一棵生成树。",
+      "anchor": "注意：只有连通图才有生成树，而对于非连通图，只存在生成森林．"
+    },
+    {
+      "id": "OW-77",
+      "document_name": "seg.md",
+      "chunk_seq": 11,
+      "category": "long_tail",
+      "question": "在线段树的讨论中，区间信息被形式化地定义为什么？其中 I 表示什么？",
+      "reference_answer": "区间信息被定义为以区间为自变量的函数 φ: I → M，其中 I 表示 [L,R] 的所有子区间所构成的集合。",
+      "anchor": "一般地，**区间信息** 是以区间为自变量的函数 $\\varphi:\\mathcal I\\rightarrow M$，其中，$\\mathcal I$ 表示 $["
+    },
+    {
+      "id": "OW-78",
+      "document_name": "treap.md",
+      "chunk_seq": 9,
+      "category": "confusion",
+      "question": "若只用同一个值同时满足二叉搜索树和堆两种性质来组合数据结构，结果会发生什么？",
+      "reference_answer": "这两种数据结构在组合后会退化成一条链，因此 Treap 额外引入随机优先级：权值满足二叉搜索树性质，独立的随机优先级满足堆性质。",
+      "anchor": "不难看出，如果用的是同一个值，那么这两种数据结构在组合后会变成一条链，所以我们再在搜索树的基础上，引入一个给堆的值 $\\"
+    },
+    {
+      "id": "OW-79",
+      "document_name": "avl.md",
+      "chunk_seq": 0,
+      "category": "fact",
+      "question": "AVL 树是一种什么类型的树？",
+      "reference_answer": "AVL 树是一种平衡的二叉搜索树。",
+      "anchor": "AVL 树，是一种平衡的二叉搜索树．"
+    },
+    {
+      "id": "OW-80",
+      "document_name": "avl.md",
+      "chunk_seq": 2,
+      "category": "confusion",
+      "question": "一棵合法的 AVL 树对其任意结点的左右子树高度差有什么约束？",
+      "reference_answer": "任一结点的左右子树高度差满足 |h(ls) - h(rs)| ≤ 1，并且其左右子树本身也必须是 AVL 树。",
+      "anchor": "左右子树也是 AVL 树，并且 $|h(ls) - h(rs)| \\leq 1$"
+    },
+    {
+      "id": "OW-81",
+      "document_name": "avl.md",
+      "chunk_seq": 13,
+      "category": "long_tail",
+      "question": "插入或删除节点若破坏了 AVL 树的平衡性质，需要沿着哪条路径进行调整维护？",
+      "reference_answer": "需要沿着从被插入或删除的节点到根的路径对树进行维护，对不满足性质 2 的节点进行调整。",
+      "anchor": "插入或删除节点后，可能会造成 AVL 树的性质 2 被破坏．因此，需要沿着从被插入/删除的节点到根的路径对树进行维护．如"
+    },
+    {
+      "id": "OW-82",
+      "document_name": "binary-heap.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "question": "二叉堆在结构上是一棵什么样的树？",
+      "reference_answer": "二叉堆是一棵二叉树，并且是完全二叉树，每个结点中存有一个元素（权值）。",
+      "anchor": "从二叉堆的结构说起，它是一棵二叉树，并且是完全二叉树，每个结点中存有一个元素（或者说，有个权值）．"
+    },
+    {
+      "id": "OW-83",
+      "document_name": "binary-heap.md",
+      "chunk_seq": 3,
+      "category": "confusion",
+      "question": "大根堆的堆性质是什么？与小根堆的区别在哪里？",
+      "reference_answer": "大根堆要求父亲的权值不小于儿子的权值；小根堆则相反，要求父亲的权值不大于儿子的权值。",
+      "anchor": "堆性质：父亲的权值不小于儿子的权值（大根堆）．"
+    },
+    {
+      "id": "OW-84",
+      "document_name": "binary-heap.md",
+      "chunk_seq": 12,
+      "category": "long_tail",
+      "question": "向二叉堆插入元素并执行向上调整之后，能否保证其他结点都满足堆性质？",
+      "reference_answer": "可以证明，插入之后向上调整后，没有其他结点会不满足堆性质。",
+      "anchor": "可以证明，插入之后向上调整后，没有其他结点会不满足堆性质．"
+    },
+    {
+      "id": "OW-85",
+      "document_name": "sparse-table.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "question": "ST 表（Sparse Table，稀疏表）是用于解决什么类型问题的数据结构？",
+      "reference_answer": "ST 表是用于解决可重复贡献问题的数据结构。",
+      "anchor": "ST 表（Sparse Table，稀疏表）是用于解决 **可重复贡献问题** 的数据结构．"
+    },
+    {
+      "id": "OW-86",
+      "document_name": "sparse-table.md",
+      "chunk_seq": 13,
+      "category": "confusion",
+      "question": "区间最大值问题为什么可以用 ST 表处理，即使预处理区间之间存在重叠？",
+      "reference_answer": "因为 max(x,x)=x，区间最大值具有可重复贡献性质：只要预处理区间的并覆盖所求区间，存在重叠也不影响最终答案。",
+      "anchor": "我们发现 $\\max(x,x)=x$，也就是说，区间最大值是一个具有「可重复贡献」性质的问题．即使用来求解的预处理区间有重叠部分，只要这些区间的并是所求的区间，"
+    },
+    {
+      "id": "OW-87",
+      "document_name": "sparse-table.md",
+      "chunk_seq": 16,
+      "category": "long_tail",
+      "question": "在 ST 表的实现中，f(i,j) 这个记号表示什么含义？",
+      "reference_answer": "f(i,j) 表示区间 [i, i+2^j-1] 的最大值。",
+      "anchor": "令 $f(i,j)$ 表示区间 $[i,i+2^j-1]$ 的最大值．"
+    }
+  ]
+}

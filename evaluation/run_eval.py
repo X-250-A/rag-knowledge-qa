@@ -76,6 +76,9 @@ def main() -> None:
     print(f"命中数   : {result['hits']}")
     print(f"Hit@{result['top_k']} : {result['hit_rate']:.3f}  ({result['hit_rate']:.1%})")
     print(f"MRR      : {result['mrr']:.3f}")
+    if result.get("anchor_stats", {}).get("total"):
+        stats = result["anchor_stats"]
+        print(f"anchor 解析: {stats['resolved']}/{stats['total']}，fallback={stats['fallback']}")
 
     if result["by_category"]:
         print("\n按类别:")

@@ -1,0 +1,551 @@
+{
+  "meta": {
+    "topic": "数据结构与算法（OI Wiki 扩容：30 篇）",
+    "eval_user": 12,
+    "top_k_default": 5,
+    "chunk_size": 300,
+    "note": "2026-10-19 扩容新增，题目锚定 chunk_seq + anchor；anchor 为 chunk 内逐字原文"
+  },
+  "questions": [
+    {
+      "id": "OW2-01-1",
+      "document_name": "2-sat.md",
+      "chunk_seq": 11,
+      "category": "fact",
+      "question": "判断一个 2-SAT 实例是否有解时，需要检查什么条件？",
+      "reference_answer": "需要检查对于任意布尔变量 a，表示 a 成立的点与表示 a 不成立的点是否在同一个强连通分量中，若有则无解，否则有解。",
+      "anchor": "判断对于任意布尔变量 $a$，表示 $a$ 成立的点和表示 $a$ 不成立的点是否在同一个 SCC 中"
+    },
+    {
+      "id": "OW2-01-2",
+      "document_name": "2-sat.md",
+      "chunk_seq": 12,
+      "category": "confusion",
+      "question": "根据 Tarjan 求得的 SCC 编号，应该怎样判断变量取真？它和拓扑序的关系容易混淆在哪里？",
+      "reference_answer": "若变量 x 所在 SCC 编号在 ¬x 之前，则取 x 为真；因为 Tarjan 求得的 SCC 编号相当于反拓扑序，编号越小的分量在拓扑序中越靠后。",
+      "anchor": "即 $x$ 所在 SCC 编号在 $\\neg x$ 之前时，取 $x$ 为真"
+    },
+    {
+      "id": "OW2-02-1",
+      "document_name": "ac-automaton.md",
+      "chunk_seq": 15,
+      "category": "fact",
+      "question": "在这种多模式匹配自动机中，状态 u 的失配指针所指向的状态 v 具有什么性质？",
+      "reference_answer": "状态 u 的 fail 指针指向另一个状态 v，其中 v 属于 Q，且 v 是 u 的最长后缀，即在若干个后缀状态中取最长的一个作为 fail 指针。",
+      "anchor": "状态 $u$ 的 fail 指针指向另一个状态 $v$，其中 $v\\in Q$，且 $v$ 是 $u$ 的最长后缀（即在若干个后缀状态中取最长的一个作为 fail 指针）．"
+    },
+    {
+      "id": "OW2-02-2",
+      "document_name": "ac-automaton.md",
+      "chunk_seq": 44,
+      "category": "long_tail",
+      "question": "在按 BFS 顺序求失配指针时，为什么把根结点的儿子一一入队，而不是把根结点入队？",
+      "reference_answer": "因为若将根结点入队，则在第一次 BFS 的时候，会将根结点儿子的 fail 指针标记为本身，因此将根结点的儿子一一入队，而不是将根结点入队。",
+      "anchor": "若将根结点入队，则在第一次 BFS 的时候，会将根结点儿子的 fail 指针标记为本身．因此我们将根结点的儿子一一入队，而不是将根结点入队．"
+    },
+    {
+      "id": "OW2-03-1",
+      "document_name": "amortized-analysis.md",
+      "chunk_seq": 30,
+      "category": "fact",
+      "question": "用势能函数衡量数据结构预留资源时，所有可达状态的势能需要满足什么条件？初始状态是否必须为零势能？",
+      "reference_answer": "所有可达状态 S 的势能均需满足 Φ(S) ≥ Φ(S₀)，而额外要求 Φ(S₀)=0 实际上是不必要的。",
+      "anchor": "则所有可达状态 $S$ 的势能均需满足 $\\Phi(S) \\geq \\Phi(S_0)$[^clemson][^uci][^stanford]，有的资料会额外要求 $\\Phi(S_0)=0$[^cornell]，实际上是不必要的．"
+    },
+    {
+      "id": "OW2-03-2",
+      "document_name": "amortized-analysis.md",
+      "chunk_seq": 46,
+      "category": "confusion",
+      "question": "在势能分析中，当插入操作触发扩容时，操作的实际成本为 O(n)，而势能变化是 2-n，这两个量在均摊成本公式中如何组合？容易把哪个符号弄反？",
+      "reference_answer": "均摊成本等于实际成本加上势能变化，即 n+1+(2-n)=3；容易混淆的是把势能变化 2-n 误当作减去或与实际成本相减。",
+      "anchor": "**均摊成本**：$n + 1 + (2 - n) = 3$．"
+    },
+    {
+      "id": "OW2-04-1",
+      "document_name": "cat-tree.pdf",
+      "chunk_seq": 1,
+      "category": "fact",
+      "question": "这种不支持修改、仅支持快速区间询问的静态线段树，在询问次数满足什么条件时才有显著价值？",
+      "reference_answer": "在询问次数较多（即 m=Ω(n)）时，该做法才有显著价值。",
+      "anchor": "在询问次数较多（$m=\\Omega(n)$）时，该做法才有显著价值．"
+    },
+    {
+      "id": "OW2-04-2",
+      "document_name": "cat-tree.pdf",
+      "chunk_seq": 8,
+      "category": "long_tail",
+      "question": "在用堆式建树求两个节点编号的LCA时，若用公式 lcp(x,y)=x>>digits[x^y]，其中 digits[x] 表示什么？",
+      "reference_answer": "digits[x] 表示二进制下 x 的位数，即 ⌊log2 x⌋+1。",
+      "anchor": "其中digits[x] 表示二进制下$x$ 的位数，即$\\lfloor \\log2 x \\rfloor+1$"
+    },
+    {
+      "id": "OW2-05-1",
+      "document_name": "catalan.md",
+      "chunk_seq": 8,
+      "category": "fact",
+      "question": "在 n×n 方格图中，从左下角出发，只能向右或向上走，不走到对角线 y=x 上方但可以触碰，到达右上角的路径总数用什么表示？",
+      "reference_answer": "到达右上角的路径总数为 C_n。",
+      "anchor": "不走到对角线 $y=x$ 上方（但可以触碰）的情况下，到达右上角的路径总数为 $C_n$．"
+    },
+    {
+      "id": "OW2-05-2",
+      "document_name": "catalan.md",
+      "chunk_seq": 66,
+      "category": "confusion",
+      "question": "在三角剖分的双射证明中，对凸(n+2)边形 P 做“剖分并标记一条非基边”的方案数，与对凸(n+3)边形 Q 做“标记一条非基边再做三角剖分”的方案数分别记为多少？",
+      "reference_answer": "对 P 剖分并标记的方案共有 (4n+2)C_n 种，对 Q 标记并剖分的方案共有 (n+2)C_{n+1} 种。",
+      "anchor": "这共有 $(4n+2)C_n$ 种剖分加标记的方案"
+    },
+    {
+      "id": "OW2-06-1",
+      "document_name": "diff-constraints.md",
+      "chunk_seq": 8,
+      "category": "fact",
+      "question": "用队列优化的 Bellman–Ford 判断图中是否存在负环，最坏时间复杂度是多少？",
+      "reference_answer": "最坏时间复杂度为 O(nm)。",
+      "anchor": "一般使用 Bellman–Ford 或队列优化的 Bellman–Ford（俗称 SPFA，在某些随机图跑得很快）判断图中是否存在负环，最坏时间复杂度为 $O(nm)$．"
+    },
+    {
+      "id": "OW2-06-2",
+      "document_name": "diff-constraints.md",
+      "chunk_seq": 12,
+      "category": "confusion",
+      "question": "在把形如 x_a - x_b ≥ c 的条件转化为 ≤ 形式时，应连哪条有向边？",
+      "reference_answer": "转化为 x_b - x_a ≤ -c，并从 a 向 b 连一条权值为 -c 的边，即 add(a, b, -c)。",
+      "anchor": "| $x_a - x_b \\geq c$ |             $x_b - x_a \\leq -c$             |        `add(a, b, -c);`       |"
+    },
+    {
+      "id": "OW2-07-1",
+      "document_name": "divide-and-conquer.md",
+      "chunk_seq": 20,
+      "category": "fact",
+      "question": "在程序执行中，递归依靠什么机制实现，每次函数调用和返回时栈会如何变化？",
+      "reference_answer": "递归是利用堆栈来实现的，每当进入一个函数调用栈就增加一层栈帧，每次函数返回栈就减少一层栈帧。",
+      "anchor": "在程序执行中，递归是利用堆栈来实现的．每当进入一个函数调用，栈就会增加一层栈帧，每次函数返回，栈就会减少一层栈帧．"
+    },
+    {
+      "id": "OW2-07-2",
+      "document_name": "divide-and-conquer.md",
+      "chunk_seq": 37,
+      "category": "long_tail",
+      "question": "当分治法面对的各个子问题不独立时，会带来什么不良后果，通常改用哪种方法更好？",
+      "reference_answer": "如果各子问题是不独立的，分治法会重复地解公共子问题而做许多不必要的工作，此时一般用动态规划较好。",
+      "anchor": "如果各子问题是不独立的，则分治法要重复地解公共的子问题，也就做了许多不必要的工作．此时虽然也可用分治法，但一般用"
+    },
+    {
+      "id": "OW2-08-1",
+      "document_name": "dominator-tree.md",
+      "chunk_seq": 8,
+      "category": "fact",
+      "question": "在有向图中，若从入口结点 s 到结点 u 的每一条路径都经过结点 v，那么称 v 对 u 是什么关系？",
+      "reference_answer": "称 v 支配 u，也称 v 是 u 的一个支配点，记作 v dom u。",
+      "anchor": "若从 $s$ 到 $u$ 的每一条路径都经过某一个结点 $v$，那么我们称 $v$  **支配**  $u$，也称 $v$ 是 $u$ 的一个 **支配点**，记作 $v\\ dom\\ u$．"
+    },
+    {
+      "id": "OW2-08-2",
+      "document_name": "dominator-tree.md",
+      "chunk_seq": 53,
+      "category": "confusion",
+      "question": "结点 u 的支配点集 S 中，满足什么条件的结点 v 才是 u 的直接支配点？",
+      "reference_answer": "若 v 在 S 中，且对 S 中除 u、v 外的任意结点 w，都有 w 支配 v，则 idom(u)=v。",
+      "anchor": "对于一个结点 $u$ 的支配点集 $S$，若 $v \\in S$ 满足 $\\forall w \\in S\\setminus\\{u,v\\}, w\\ dom\\ v$，则 $idom(u)=v$．"
+    },
+    {
+      "id": "OW2-09-1",
+      "document_name": "ett.md",
+      "chunk_seq": 3,
+      "category": "fact",
+      "question": "若用 Splay、Treap 等平衡二叉搜索树来维护序列，维护动态树操作的时间复杂度是多少？",
+      "reference_answer": "使用 Splay、Treap 等平衡二叉搜索树维护序列时，维护动态树操作的时间复杂度均为 O(log n)。",
+      "anchor": "而这些数据结构维护区间操作的复杂度均为 $O(\\log n)$，由此也可以在 $O(\\log n)$ 的时间内维护动态树的操作．"
+    },
+    {
+      "id": "OW2-09-2",
+      "document_name": "ett.md",
+      "chunk_seq": 29,
+      "category": "long_tail",
+      "question": "删除一条边时，若序列中表示两个方向有向边的元素先后顺序与预期相反，应如何处理？",
+      "reference_answer": "在序列中 $[(u, v)]$ 有可能出现在 $[(v, u)]$ 的后面，此时可以先交换 $u$ 和 $v$ 的值然后再操作。",
+      "anchor": "注意，在序列 $L$ 中 $[(u, v)]$ 有可能出现在 $[(v, u)]$ 的后面，此时可以先交换 $u$ 和 $v$ 的值然后再操作．"
+    },
+    {
+      "id": "OW2-10-1",
+      "document_name": "finger-tree.md",
+      "chunk_seq": 6,
+      "category": "fact",
+      "question": "这种纯函数式序列数据结构能够在均摊常量时间内完成哪些操作，又能在对数时间内完成哪些操作？",
+      "reference_answer": "它可以在均摊常量时间内完成访问、添加到序列前端和末尾等操作，以及在对数时间内完成串联和随机访问。",
+      "anchor": "它可以在均摊常量时间（amortized constant time）内完成访问，添加到序列的前端和末尾等操作，以及在对数时间（logarithmic time）内完成串联和随机访问．"
+    },
+    {
+      "id": "OW2-10-2",
+      "document_name": "finger-tree.md",
+      "chunk_seq": 24,
+      "category": "confusion",
+      "question": "用这种纯函数式结构实现高效双向队列时，所有操作的时间开销是多少，且与结构是否持久有何关系？",
+      "reference_answer": "无论结构是否持久，所有操作都需要 Θ(1) 时间。",
+      "anchor": "无论结构是否持久，所有操作都需要 `Θ(1)` 时间．"
+    },
+    {
+      "id": "OW2-11-1",
+      "document_name": "game-theory-intro.docx",
+      "chunk_seq": 18,
+      "category": "fact",
+      "question": "在博弈中，如果所有参与者对各方可选决策和最终收益等博弈结构本身都有完全了解，并且这些信息是公共知识，这种情形称为什么？",
+      "reference_answer": "完全信息是指所有参与者对博弈结构本身（包括各方可选决策和最终收益）有完全了解，且这些信息为公共知识。",
+      "anchor": "完全信息（complete information）是指所有参与者对博弈结构本身（包括各方可选决策和最终收益）有完全了解，且这些信息为公共知识（common knowledge）．"
+    },
+    {
+      "id": "OW2-11-2",
+      "document_name": "game-theory-intro.docx",
+      "chunk_seq": 19,
+      "category": "long_tail",
+      "question": "「完全信息」与「完美信息」之间是什么关系？文档用什么例子说明二者可以分离？",
+      "reference_answer": "二者是两个独立概念，互不包含；麻将是完全信息但不完美信息的博弈，而某些具有隐藏目标、但行为全程公开的游戏则属于完美信息但不完全信息的博弈。",
+      "anchor": "值得注意的是，「完全信息」和「完美信息」是两个独立概念，互不包含．例如，麻将是一种完全信息但不完美信息的博弈，因其规则和收益是公开的，但牌面信息并不透明；而某些具有隐藏目标、但行为全程公开的游戏，则属于完美信息但不完全信息的博弈．"
+    },
+    {
+      "id": "OW2-12-1",
+      "document_name": "greedy.md",
+      "chunk_seq": 32,
+      "category": "fact",
+      "question": "在解决带截止时间和利润的工作安排问题时，若输入共有 n 个任务，该方法的时空复杂度分别是多少？",
+      "reference_answer": "空间复杂度为 O(n)，时间复杂度为 O(n\\log n)。",
+      "anchor": "空间复杂度：当输入 $n$ 个任务时使用 $n$ 个 $a$ 数组元素，优先队列中最差情况下会储存 $n$ 个元素，则空间复杂度为 $O(n)$．"
+    },
+    {
+      "id": "OW2-12-2",
+      "document_name": "greedy.md",
+      "chunk_seq": 9,
+      "category": "confusion",
+      "question": "在证明贪心策略正确时，交换论证法与归纳法各自的基本做法有什么不同？",
+      "reference_answer": "交换论证从任意一个最优解出发，通过有限次保持可行性且不使目标值变差的交换或替换，将其变为贪心算法得到的解；归纳法则先算出边界情况的最优解，再证明每个 n 的最优解可由前一个推导出结果。",
+      "anchor": "1.  交换论证：从任意一个最优解出发，通过有限次保持可行性且不使目标值变差的交换或替换，将其变为贪心算法得到的解，从而证明贪心解也是最优解．常用反证法书写证明．\n2.  归纳法：先算得出边界情况（例如 $n = 1$）的最优解 $F_1$，然后再证明：对于每个 $n$，$F_{n+1}$ 都可以由 $F_{n}$ 推导出结果．"
+    },
+    {
+      "id": "OW2-13-1",
+      "document_name": "inverse.md",
+      "chunk_seq": 2,
+      "category": "fact",
+      "question": "在数论中，一个整数在模某个正整数意义下所对应的“倒数”被称为什么？",
+      "reference_answer": "称为模逆元（modular multiplicative inverse），也称作数论倒数。",
+      "anchor": "这就是 **模逆元**（modular multiplicative inverse），也称作 **数论倒数**．"
+    },
+    {
+      "id": "OW2-13-2",
+      "document_name": "inverse.md",
+      "chunk_seq": 39,
+      "category": "long_tail",
+      "question": "用线性时间递推的方法对前若干个整数在模某个数下求逆元时，这个模数必须满足什么限制？不满足时会出现什么问题？",
+      "reference_answer": "这一算法只适用于模数是素数的情形；若模数不是素数，递推公式中的模数对当前整数取余所得的数可能不与模数互素，因而其逆元可能不存在。",
+      "anchor": "这一算法只适用于模数是素数的情形．对于模数 $m$ 不是素数的情形，无法保证递推公式中得到的 $m\\bmod i$ 仍然与 $m$ 互素，因而递推所需要的 $(m\\bmod i)^{-1}$ 可能并不存在．"
+    },
+    {
+      "id": "OW2-14-1",
+      "document_name": "kmp.md",
+      "chunk_seq": 24,
+      "category": "fact",
+      "question": "按文档给出的步骤，若在尝试某个真前缀长度时真前缀与真后缀相等，当前前缀函数值应取什么？",
+      "reference_answer": "此时该长度即为 $\\pi[i]$。",
+      "anchor": "如果当前长度下真前缀和真后缀相等，则此时长度为 $\\pi[i]$，否则令 j 自减 1，继续匹配，直到 $j=0$．"
+    },
+    {
+      "id": "OW2-14-2",
+      "document_name": "kmp.md",
+      "chunk_seq": 78,
+      "category": "confusion",
+      "question": "字符串的最长 border 长度与最小周期分别对应前缀函数的哪个值、如何由它得到？",
+      "reference_answer": "$\\pi[n-1]$ 是 $s$ 最长 border 的长度，而 $n - \\pi[n-1]$ 是 $s$ 的最小周期。",
+      "anchor": "由于 $\\pi[n-1]$ 是 $s$ 最长 border 的长度，所以 $n - \\pi[n-1]$ 是 $s$ 的最小周期．"
+    },
+    {
+      "id": "OW2-15-1",
+      "document_name": "lct.md",
+      "chunk_seq": 45,
+      "category": "fact",
+      "question": "在辅助树中，为了让维护操作不必再维护原树，需要维护什么即可？",
+      "reference_answer": "由于辅助树的以上性质，维护任何操作都不需要维护原树，只需要维护辅助树即可。",
+      "anchor": "由于辅助树的以上性质，我们维护任何操作都不需要维护原树，辅助树可以在任何情况下拿出一个唯一的原树，我们只需要维护辅助树即可．"
+    },
+    {
+      "id": "OW2-15-2",
+      "document_name": "lct.md",
+      "chunk_seq": 96,
+      "category": "long_tail",
+      "question": "要使指定的点成为原树的根时，在 `Access(x)` 返回值为 y 的情况下，应对以 y 为根的 Splay 树做什么细节操作？",
+      "reference_answer": "由于 y 是 x 到当前根的路径所代表的 Splay 的根，因此将以 y 为根的 Splay 树进行区间翻转即可。",
+      "anchor": "由于 $y$ 是 $x$ 到当前根的路径所代表的 Splay 的根，因此将以 $y$ 为根的 Splay 树进行区间翻转即可．"
+    },
+    {
+      "id": "OW2-16-1",
+      "document_name": "linear-algebra-matrix.docx",
+      "chunk_seq": 48,
+      "category": "fact",
+      "question": "行数与列数满足什么关系的矩阵被称为方阵？",
+      "reference_answer": "行数等于列数的矩阵称为方阵。",
+      "anchor": "行数等于列数的矩阵称为方阵．方阵是一种特殊的矩阵．"
+    },
+    {
+      "id": "OW2-16-2",
+      "document_name": "linear-algebra-matrix.docx",
+      "chunk_seq": 64,
+      "category": "confusion",
+      "question": "关于上（下）三角矩阵，乘积结构与可逆性这两个性质容易与一般矩阵混淆，它们的实际结论分别是什么？",
+      "reference_answer": "两个上（下）三角矩阵的乘积仍然是上（下）三角矩阵；如果对角线元素均非0，则上（下）三角矩阵可逆，逆也是上（下）三角矩阵。",
+      "anchor": "两个上（下）三角矩阵的乘积仍然是上（下）三角矩阵．如果对角线元素均非 $0$，则上（下）三角矩阵可逆，逆也是上（下）三角矩阵．"
+    },
+    {
+      "id": "OW2-17-1",
+      "document_name": "manacher.md",
+      "chunk_seq": 22,
+      "category": "fact",
+      "question": "在计算以各位置为中心的最长奇回文半径时，维护已找到的最靠右子回文串边界[l,r]，初始时l和r分别置为什么？",
+      "reference_answer": "初始时置 l = 0 和 r = -1。",
+      "anchor": "初始时，我们置 $l = 0$ 和 $r = -1$（*-1*需区别于倒序索引位置，这里可为任意负数，仅为了循环初始时方便）．"
+    },
+    {
+      "id": "OW2-17-2",
+      "document_name": "manacher.md",
+      "chunk_seq": 30,
+      "category": "long_tail",
+      "question": "当对称位置j对应的回文串触及外部回文串边界（即j - d_1[j] + 1 ≤ l 或 i + d_1[j] - 1 ≥ r）时，能直接把d_1[i]赋成d_1[j]吗？为什么？应该怎样处理？",
+      "reference_answer": "不能直接赋值，因为外部回文串范围以外的对称性没有保证，没有足够信息断言位置i的回文串具有同样长度，所以应截断长度，置 d_1[i] = r - i + 1，再运行朴素算法尝试扩展。",
+      "anchor": "因为在「外部」回文串范围以外的对称性没有保证，因此直接置 $d_1[i] = d_1[j]$ 将是不正确的：我们没有足够的信息来断言在位置 $i$ 的回文串具有同样的长度．"
+    },
+    {
+      "id": "OW2-18-1",
+      "document_name": "min-cost-flow.pdf",
+      "chunk_seq": 1,
+      "category": "fact",
+      "question": "在最初网络没有负圈的前提下，该算法为流量为0时设定的最小费用是多少？",
+      "reference_answer": "在最初网络没有负圈的情况下，流量为0时的最小费用f0为0。",
+      "anchor": "我们假设最初的网络上没有负圈，这种情况下\n$f0=0$．"
+    },
+    {
+      "id": "OW2-18-2",
+      "document_name": "min-cost-flow.pdf",
+      "chunk_seq": 14,
+      "category": "confusion",
+      "question": "增广后更新各点势能时，给原势能加上的是哪个距离量，而不是什么？",
+      "reference_answer": "给原势能hi加上的是增广后源点到i号点在重置边权后网络上的最短距离d'i，而不是原网络上的原始边权或普通距离。",
+      "anchor": "设增广后从源点到$i$ 号点的最短距离为$d'i$（这里的距离为\n重置每条边边权后得到的距离），只需给$hi$ 加上$d'i$ 即可．"
+    },
+    {
+      "id": "OW2-19-1",
+      "document_name": "min-cycle.pdf",
+      "chunk_seq": 0,
+      "category": "fact",
+      "question": "在无向图中，若 u 和 v 之间有一条边长为 w 的边，dis(u,v) 表示删除该边后两点间的最短路，则最小环长度如何表示？",
+      "reference_answer": "无向图中的最小环是 dis(u,v)+w。",
+      "anchor": "那么无向图中的最小环是$dis(u,v)+w$．"
+    },
+    {
+      "id": "OW2-19-2",
+      "document_name": "min-cycle.pdf",
+      "chunk_seq": 7,
+      "category": "long_tail",
+      "question": "在通过递归获取路径来构造最小环的实现中，递归到哪两个节点相邻时会直接返回？",
+      "reference_answer": "当 u 和 v 相邻时直接返回即可。",
+      "anchor": "特别地，当$u$ 和$v$ 相邻时，直接返回即可．"
+    },
+    {
+      "id": "OW2-20-1",
+      "document_name": "mobius.pdf",
+      "chunk_seq": 3,
+      "category": "fact",
+      "question": "文中给出的莫比乌斯函数满足的一个重要恒等式是什么？",
+      "reference_answer": "对于正整数 n，有 ∑_{d|n} μ(d) = [n = 1]，即当 n=1 时值为 1。",
+      "anchor": "对于正整数$n$，有\n$$\n\\sum{d\\mid n}\\mu(d) = [n = 1] =\n\\begin{cases}\n1,&n=1,\\"
+    },
+    {
+      "id": "OW2-20-2",
+      "document_name": "mobius.pdf",
+      "chunk_seq": 44,
+      "category": "confusion",
+      "question": "计算长度为 n 的数列的 Dirichlet 前缀和与计算其 Dirichlet 差分，在时间复杂度上有什么区别？",
+      "reference_answer": "二者时间复杂度相同，都可以在 O(n log log n) 时间内完成。",
+      "anchor": "这一算法可以在$O(n\\log\\log n)$时间内计算出长度为$n$ 的数列的\nDirichlet 前缀和．类似地，利用逐维差分就可以在相同时间复杂度内求出数列的Dirichlet\n差分．"
+    },
+    {
+      "id": "OW2-21-1",
+      "document_name": "pairing-heap.docx",
+      "chunk_seq": 12,
+      "category": "fact",
+      "question": "与其他常见堆结构相比，该数据结构是否需要维护树大小、深度、排名等额外信息？",
+      "reference_answer": "它不维护任何额外的树大小、深度、排名等信息，任何满足堆性质的树都是合法配对堆。",
+      "anchor": "配对堆不维护任何额外的树大小，深度，排名等信息"
+    },
+    {
+      "id": "OW2-21-2",
+      "document_name": "pairing-heap.docx",
+      "chunk_seq": 54,
+      "category": "long_tail",
+      "question": "若自行实现删除最小值第二步合并的迭代版本，在合并顺序上有什么必须保证的细节？",
+      "reference_answer": "迭代版本必须保证从右往左合并的顺序，否则复杂度将失去保证。",
+      "anchor": "如果读者需要自行实现迭代版本的话请务必注意保证该顺序，否则复杂度将失去保证"
+    },
+    {
+      "id": "OW2-22-1",
+      "document_name": "palindromic-automaton.pdf",
+      "chunk_seq": 3,
+      "category": "fact",
+      "question": "这种回文数据结构中两个初始状态分别代表什么长度的回文串，偶根的 fail 指针指向哪里？",
+      "reference_answer": "两个初始状态分别代表长度为 -1 和 0 的回文串，偶根的 fail 指针指向奇根。",
+      "anchor": "回文树有两个初始状态，分别代表长度为$-1,0$ 的回文串．我们可以称它们为奇根，偶根"
+    },
+    {
+      "id": "OW2-22-2",
+      "document_name": "palindromic-automaton.pdf",
+      "chunk_seq": 7,
+      "category": "confusion",
+      "question": "在求新建节点的 fail 指针时，如果不断跳转 fail 指针仍然没有匹配到，文档说应该把它连向哪个节点？",
+      "reference_answer": "如果 fail 没匹配到，那么将它连向长度为 0 的那个节点。",
+      "anchor": "如果fail 没匹配到，那么将它连向长度为$0$ 的那个节点，显然这是可行的（因为这是所有节点的后缀）．"
+    },
+    {
+      "id": "OW2-23-1",
+      "document_name": "prefix-sum.pdf",
+      "chunk_seq": 10,
+      "category": "fact",
+      "question": "用容斥原理求多维前缀和时，当维度k增大，时间复杂度会变成什么？",
+      "reference_answer": "时间复杂度会成为O(2^kN)，其中k是数组维度，而N是给定数组大小。",
+      "anchor": "当维度$k$ 增大时，由于容斥原理涉及的项数以指数级的速度增长，时间复杂度会成为$O(2^kN)$，其中$k$ 是数组维度，而$N$ 是给定数组大小．"
+    },
+    {
+      "id": "OW2-23-2",
+      "document_name": "prefix-sum.pdf",
+      "chunk_seq": 22,
+      "category": "long_tail",
+      "question": "在树边上存储权值的情形下，查询连接两结点的路径边权和时，所用公式为什么不包含两结点最近公共祖先处的权值？",
+      "reference_answer": "因为该权值存储的边权不在所求路径中。",
+      "anchor": "注意与点权的情形不同，所查询的权值和不包括$\\operatorname{lca}(x, y)$ 处的权值，因为它存储的边权不在所求路径中．"
+    },
+    {
+      "id": "OW2-24-1",
+      "document_name": "sieve.md",
+      "chunk_seq": 13,
+      "category": "fact",
+      "question": "把所有小于等于n的数从小到大依次处理，并标记当前数的更大倍数，这种方法的时间复杂度是多少？",
+      "reference_answer": "该筛法的时间复杂度是 O(n log log n)。",
+      "anchor": "以上为 **Eratosthenes 筛法**（埃拉托斯特尼筛法，简称埃氏筛法），时间复杂度是 $O(n\\log\\log n)$．"
+    },
+    {
+      "id": "OW2-24-2",
+      "document_name": "sieve.md",
+      "chunk_seq": 43,
+      "category": "confusion",
+      "question": "分块筛法与普通埃氏筛法在渐近时间复杂度上有什么区别，分块筛法在选择块大小S时又需要在什么之间权衡？",
+      "reference_answer": "分块筛法的渐近时间复杂度与埃氏筛法是一样的（除非块非常小），但所需内存缩小为 O(sqrt(n)+S)；同时块较小时，每块对素数都要做除法，所以选择常数 S 时要保持平衡。",
+      "anchor": "分块筛法的渐近时间复杂度与埃氏筛法是一样的（除非块非常小），但是所需的内存将缩小为 $O(\\sqrt{n} + S)$，并且有更好的缓存结果．"
+    },
+    {
+      "id": "OW2-25-1",
+      "document_name": "sqrt-tree.md",
+      "chunk_seq": 16,
+      "category": "fact",
+      "question": "这种递归构造的树形结构中，整棵树的高度和构建复杂度分别是什么？",
+      "reference_answer": "整棵树的高度是 O(log log n) 的，构建这棵树的复杂度是 O(n log log n) 的。",
+      "anchor": "一个大小为 $k$ 的结点有 $O(\\sqrt{k})$ 个子节点，于是整棵树的高度是 $O(\\log\\log n)$ 的，每一层的区间总长是 $O(n)$ 的，因此我们构建这棵树的复杂度是 $O(n\\log\\log n)$ 的．"
+    },
+    {
+      "id": "OW2-25-2",
+      "document_name": "sqrt-tree.md",
+      "chunk_seq": 27,
+      "category": "long_tail",
+      "question": "要判断区间两个端点是否落在同一个块中，用二进制表示时依据的位运算条件是什么？",
+      "reference_answer": "检查区间两个端点是否只有后 $k$ 位不同，即满足 $l\\oplus r\\le 2^k-1$。",
+      "anchor": "因此我们需要检查区间两个端点是否只有后 $k$ 位不同，即 $l\\oplus r\\le 2^k-1$．因此我们可以快速找到答案区间所在的层："
+    },
+    {
+      "id": "OW2-26-1",
+      "document_name": "steiner-tree.md",
+      "chunk_seq": 7,
+      "category": "fact",
+      "question": "在给定 n 个点的情形下，复接点（即额外加入的连接点）的数量最多是多少？",
+      "reference_answer": "在给定 n 个点的情形，最多将有 n-2 个复接点（斯坦纳点）。",
+      "anchor": "在给定 $n$ 个点的情形，最多将有 $n-2$ 个复接点（斯坦纳点）．"
+    },
+    {
+      "id": "OW2-26-2",
+      "document_name": "steiner-tree.md",
+      "chunk_seq": 3,
+      "category": "confusion",
+      "question": "当三角形 ABC 有一个内角大于或等于 120° 时，使得到三顶点距离之和最短的点 P 位于何处？这与三个内角都小于 120° 的情形有何不同？",
+      "reference_answer": "若有一个角（例如 C 角）大于或等于 120°，则点 P 与顶点 C 重合；而三个内角都小于 120° 时，P 是使三边对该点所张的角都是 120° 的点。",
+      "anchor": "如果三角形 $\\textit{ABC}$ 的有一个角，例如 $C$ 角，大于或等于 $120^{\\circ}$，那么点 $P$ 与顶点 $C$ 重合．"
+    },
+    {
+      "id": "OW2-27-1",
+      "document_name": "suffix-automaton.docx",
+      "chunk_seq": 15,
+      "category": "fact",
+      "question": "对于一个长度为 $n$（$n\\ge 3$）的字符串，其对应的压缩自动机最多有多少个结点和多少条转移边？",
+      "reference_answer": "当 $n\\ge 3$ 时，一个 SAM 最多有 $2n-1$ 个结点和 $3n-4$ 条转移边。",
+      "anchor": "当 $n\\ge 3$ 时，一个 SAM 最多有 $2n-1$ 个结点和 $3n-4$ 条转移边．"
+    },
+    {
+      "id": "OW2-27-2",
+      "document_name": "suffix-automaton.docx",
+      "chunk_seq": 52,
+      "category": "long_tail",
+      "question": "对于两个非空子串 $u$ 和 $w$（$|u|\\le |w|$），它们的结束位置集合之间满足什么关系？这种关系又取决于什么条件？",
+      "reference_answer": "要么 $\\operatorname{endpos}(u)\\cap \\operatorname{endpos}(w)=\\varnothing$，要么 $\\operatorname{endpos}(w)\\subseteq \\operatorname{endpos}(u)$，取决于 $u$ 是否为 $w$ 的一个后缀。",
+      "anchor": "要么 $\\operatorname{endpos}(u)\\cap \\operatorname{endpos}(w)=\\varnothing$，要么 $\\operatorname{endpos}(w)\\subseteq \\operatorname{endpos}(u)$，取决于 $u$ 是否为 $w$ 的一个后缀"
+    },
+    {
+      "id": "OW2-28-1",
+      "document_name": "trie.md",
+      "chunk_seq": 44,
+      "category": "fact",
+      "question": "在这类字典树中强制让每个叶子节点到根的距离为 MAXH，是为了便于处理什么操作？",
+      "reference_answer": "是为了便于全局加一时处理进位。",
+      "anchor": "这样做的目的是为了便于全局 `+1` 时处理进位．"
+    },
+    {
+      "id": "OW2-28-2",
+      "document_name": "trie.md",
+      "chunk_seq": 59,
+      "category": "confusion",
+      "question": "在交换左右儿子时，把边权存储在儿子结点而不是父亲结点，主要的好处是什么？",
+      "reference_answer": "在交换左右儿子的时候，在儿子结点存储到父亲这条边的距离显然更加方便。",
+      "anchor": "但是在这里，在交换左右儿子的时候，在儿子结点存储到父亲这条边的距离，显然更加方便．"
+    },
+    {
+      "id": "OW2-29-1",
+      "document_name": "virtual-tree.docx",
+      "chunk_seq": 34,
+      "category": "fact",
+      "question": "在构造出的压缩树中，原树里祖先与后代的关系是否可能被颠倒？",
+      "reference_answer": "不会改变，不会出现原本 a 是 b 的祖先结果后面 a 变成 b 的后代的情况。",
+      "anchor": "不难发现虚树中祖先后代的关系并不会改变．（就是不会出现原本 $a$ 是 $b$ 的祖先结果后面 $a$ 变成 $b$ 的后代了之类的鬼事）"
+    },
+    {
+      "id": "OW2-29-2",
+      "document_name": "virtual-tree.docx",
+      "chunk_seq": 109,
+      "category": "long_tail",
+      "question": "在构造压缩树时，若栈顶节点的 DFS 序大于当前求得的 LCA 的 DFS 序，而栈顶下面那个节点的 DFS 序恰好等于 LCA 的 DFS 序，应如何处理连接与出栈？",
+      "reference_answer": "直接连接 LCA 到栈顶元素的边（即 1→4），并把栈顶元素从栈中弹出。",
+      "anchor": "发现栈顶节点 $4$ 的 DFS 序是大于 $LCA(6,4)$ 的，但是次大节点（栈顶节点下面的那个节点）$1$ 的 DFS 序是等于 LCA 的（其实 DFS 序相等说明节点也相等），说明 LCA 已经入栈了，所以直接连接 $1\\to4$ 的边，也就是 LCA 到栈顶元素的边．并把 $4$ 从栈中弹出．"
+    },
+    {
+      "id": "OW2-31-1",
+      "document_name": "counting-sort.docx",
+      "chunk_seq": 22,
+      "category": "fact",
+      "question": "该线性时间排序算法的时间复杂度表达式是什么，其中各变量分别代表什么？",
+      "reference_answer": "计数排序的时间复杂度为 O(n+w)，其中 w 代表待排序数据的值域大小。",
+      "anchor": "计数排序的时间复杂度为 $O(n+w)$，其中 $w$ 代表待排序数据的值域大小．"
+    },
+    {
+      "id": "OW2-31-2",
+      "document_name": "counting-sort.docx",
+      "chunk_seq": 16,
+      "category": "long_tail",
+      "question": "在按额外数组确定排名后，若希望相同 key 值的元素保持原有先后顺序，应按待排序数组的什么顺序进行排列？",
+      "reference_answer": "如果按照 A 的逆序进行排列，排序后的数组将保持 A 的原序（相同 key 值情况下），从而得到稳定排序。",
+      "anchor": "如果按照 $A$ 的逆序进行排列，那么显然排序后的数组将保持 $A$ 的原序（相同 key 值情况下），也即得到一种稳定的排序算法．"
+    }
+  ]
+}
