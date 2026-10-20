@@ -3,32 +3,18 @@
 用法:  python evaluation/scripts/chunk_preview.py [文档路径...]
 不含参数时扫描 evaluation/knowledge_base/*.md。
 
-说明: 内联复制 backend/app/services/chunker.py 的 chunk_text（纯函数），
-与入库时 pipeline.build 用到的分块逻辑完全一致，用于精确核对评估集的 chunk_seq。
+说明: import 后端真身 chunker.chunk_text（单一真源，2026-10-20 收口），
+分块逻辑只此一份，与入库时 pipeline.build 用的完全一致，用于精确核对评估集的 chunk_seq。
 """
 
 import sys
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[2]  # 项目根
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-def chunk_text(text: str, chunk_size: int, overlap: int = 50) -> list:
-    paragraphs = text.split("\n\n")
-    chunks = []
-    chunk = ""
-    for paragraph in paragraphs:
-        if len(paragraph) <= chunk_size:
-            chunks.append(paragraph)
-        else:
-            sentences = paragraph.split("。")
-            sentences = [s + "。" for s in sentences if s]
-            for sentence in sentences:
-                if len(chunk) + len(sentence) >= chunk_size:
-                    chunks.append(chunk)
-                    chunk = chunk[-overlap:]
-                chunk += sentence
-            if chunk:
-                chunks.append(chunk)
-    return chunks
+from backend.app.services.chunker import chunk_text  # noqa: E402 单一真源：分块逻辑只此一份
 
 
 def main():

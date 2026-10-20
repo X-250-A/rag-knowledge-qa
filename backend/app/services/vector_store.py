@@ -1,6 +1,8 @@
 import chromadb
 import numpy as np
 
+from backend.app.config import DEFAULT_TOP_K
+
 # Chroma collection 名单一真源（建库/查询/删除/BM25 侧共用）
 COLLECTION_NAME = "documents"
 
@@ -48,7 +50,9 @@ def add_collection(
     return collection
 
 
-def query_collection(client, embedding: np.ndarray, top_k: int = 5, user_id: int | None = None):
+def query_collection(
+    client, embedding: np.ndarray, top_k: int = DEFAULT_TOP_K, user_id: int | None = None
+):
     collection = client.get_or_create_collection(COLLECTION_NAME)
     where = {"user_id": user_id} if user_id is not None else None
     query = collection.query(

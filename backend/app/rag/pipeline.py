@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.app.config import CHUNK_OVERLAP, CHUNK_SIZE
 from backend.app.crud import (
     create_chunk,
     update_document_status,
@@ -10,12 +11,7 @@ from backend.app.services import (
     chunk_text,
     get_embedding,
     initializing_client,
-    query_collection,
 )
-
-# 分块参数单一真源（chunk_size/overlap 同步用于 chunk_text 与 chunk 元数据）
-CHUNK_SIZE = 300
-CHUNK_OVERLAP = 50
 
 
 async def build(db: AsyncSession, text: str, document_id: int, document_name: str, user_id: int):
@@ -72,10 +68,3 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
             db=db, document_id=document_id, status=DocumentStatus.FAILED, commit=True
         )
         raise
-
-
-def query(question: str, top_k: int = 5, user_id: int | None = None):
-    query_vector = get_embedding([question])
-    client = initializing_client()
-    results = query_collection(client, query_vector, top_k, user_id=user_id)
-    return results

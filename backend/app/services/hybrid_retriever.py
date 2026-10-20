@@ -5,11 +5,12 @@ RRF 只用排名不用分数，天然免去两路分数的归一化问题：
     score(doc) = sum( 1 / (k + rank_i) )   rank 从 1 起
 """
 
+from backend.app.config import DEFAULT_TOP_K
 from backend.app.services import initializing_client
 from backend.app.services.bm25_retriever import get_bm25, tokenize
 from backend.app.services.embedding import get_embedding
-from backend.app.services.vector_store import query_collection
 from backend.app.services.reranker import rerank
+from backend.app.services.vector_store import query_collection
 
 RRF_K = 60
 RECALL_PER_PATH = 20
@@ -68,7 +69,9 @@ def _bm25_recall(question: str, user_id: int | None) -> list[dict]:
     ]
 
 
-def hybrid_retrieve(question: str, top_k: int = 5, user_id: int | None = None) -> list[dict]:
+def hybrid_retrieve(
+    question: str, top_k: int = DEFAULT_TOP_K, user_id: int | None = None
+) -> list[dict]:
     """混合检索，输出契约与原 retrieve() 一致。"""
     vec_hits = _vector_recall(question, user_id)
     bm25_hits = _bm25_recall(question, user_id)
@@ -90,7 +93,9 @@ def hybrid_retrieve(question: str, top_k: int = 5, user_id: int | None = None) -
                 "seq_no": int(seq_no),
                 "content": hit["content"],
                 "score": round(hit["score"], 4),  # rerank 分（0~1）
-                "rrf_score": round(hit["rrf_score"], 6) if hit.get("rrf_score") is not None else None,  # RRF 原分，评估回溯用（纯向量退化路径可能没有）
+                "rrf_score": round(hit["rrf_score"], 6)
+                if hit.get("rrf_score") is not None
+                else None,  # RRF 原分，评估回溯用（纯向量退化路径可能没有）
             }
         )
     return results
