@@ -1,8 +1,11 @@
+from backend.tests.conftest import TEST_PASSWORD, TEST_USERNAME
+
+
 async def test_register_and_login(client):
     # 注册
     r = await client.post(
         "/api/auth/register",
-        json={"username": "alice", "password": "secret123"},
+        json={"username": "alice", "password": TEST_PASSWORD},
     )
     assert r.status_code == 200
     assert r.json()["username"] == "alice"
@@ -10,7 +13,7 @@ async def test_register_and_login(client):
     # 用同一凭据登录，应拿到 token
     r = await client.post(
         "/api/auth/login",
-        json={"username": "alice", "password": "secret123"},
+        json={"username": "alice", "password": TEST_PASSWORD},
     )
     assert r.status_code == 200
     body = r.json()
@@ -19,7 +22,7 @@ async def test_register_and_login(client):
 
 
 async def test_register_duplicate_conflict(client):
-    payload = {"username": "bob", "password": "secret123"}
+    payload = {"username": "bob", "password": TEST_PASSWORD}
     await client.post("/api/auth/register", json=payload)
     r = await client.post("/api/auth/register", json=payload)
     assert r.status_code == 409
@@ -29,7 +32,7 @@ async def test_register_duplicate_conflict(client):
 async def test_login_wrong_password(client):
     await client.post(
         "/api/auth/register",
-        json={"username": "carol", "password": "secret123"},
+        json={"username": "carol", "password": TEST_PASSWORD},
     )
     r = await client.post(
         "/api/auth/login",
@@ -46,7 +49,7 @@ async def test_me_requires_token(client):
 async def test_me_with_token(client, auth_headers):
     r = await client.get("/api/auth/me", headers=auth_headers)
     assert r.status_code == 200
-    assert r.json()["username"] == "tester"
+    assert r.json()["username"] == TEST_USERNAME
 
 
 async def test_unknown_route_404_with_auth(client, auth_headers):

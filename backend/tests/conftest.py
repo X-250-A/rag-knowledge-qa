@@ -1,4 +1,5 @@
 # backend/tests/conftest.py
+import numpy as np
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -8,6 +9,10 @@ from sqlalchemy.pool import StaticPool
 from backend.app.db import get_db
 from backend.app.main import app
 from backend.app.models import Base
+
+# 测试凭据单一真源（所有测试共用的注册/登录账号）
+TEST_USERNAME = "tester"
+TEST_PASSWORD = "secret123"
 
 
 @pytest_asyncio.fixture
@@ -42,7 +47,7 @@ async def client(session_factory):
             try:
                 yield db
                 await db.commit()
-            except:
+            except Exception:
                 await db.rollback()
                 raise
 
@@ -56,18 +61,27 @@ async def client(session_factory):
 
 
 @pytest_asyncio.fixture
-async def auth_headers(client):
-    # 复用 client fixture：注册一个测试用户，登录拿 token，返回鉴权头
-    await client.post(
-        "/api/auth/register",
-        json={"username": "tester", "password": "secret123"},
-    )
-    r = await client.post(
-        "/api/auth/login",
-        json={"username": "tester", "password": "secret123"},
-    )
-    assert r.status_code == 200, r.text
-    return {"Authorization": f"Bearer {r.json()['token']}"}
+async def auth_headers_for(client):
+    """注册并登录指定用户，返回鉴权头（默认用 TEST_USERNAME/TEST_PASSWORD）。"""
+
+    async def _make(username: str = TEST_USERNAME, password: str = TEST_PASSWORD):
+        await client.post(
+            "/api/auth/register",
+            json={"username": username, "password": password},
+        )
+        r = await client.post(
+            "/api/auth/login",
+            json={"username": username, "password": password},
+        )
+        assert r.status_code == 200, r.text
+        return {"Authorization": f"Bearer {r.json()['token']}"}
+
+    return _make
+
+
+@pytest_asyncio.fixture
+async def auth_headers(auth_headers_for):
+    return await auth_headers_for()
 
 
 @pytest.fixture
@@ -80,6 +94,7 @@ def mock_rag(monkeypatch):
     monkeypatch.setattr(documents, "parse_file", lambda path: "hello world")
     monkeypatch.setattr(documents, "initializing_client", lambda: object())
     monkeypatch.setattr(documents, "delete_collection", lambda *args, **kwargs: None)
-    monkeypatch.setattr(pipeline, "get_embedding", lambda chunks: [0.0] * len(chunks))
+    # 形状对齐真实签名（bge-m3 1024 维）：标量列表会让未来接真断言的测试假阳性
+    monkeypatch.setattr(pipeline, "get_embedding", lambda chunks: np.zeros((len(chunks), 1024)))
     monkeypatch.setattr(pipeline, "initializing_client", lambda: object())
     monkeypatch.setattr(pipeline, "add_collection", lambda *args, **kwargs: None)

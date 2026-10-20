@@ -8,9 +8,17 @@ from backend.app.exceptions import BadRequestError
 from backend.app.routers.documents import upload_documents
 
 
+async def _upload(client, headers, name, content=b"hello"):
+    """上传单文件到 /api/documents/（返回 response）。"""
+    return await client.post(
+        "/api/documents/",
+        headers=headers,
+        files={"file": (name, io.BytesIO(content), "text/plain")},
+    )
+
+
 async def test_upload_document(client, auth_headers, mock_rag):
-    files = {"file": ("note.txt", io.BytesIO(b"hello world"), "text/plain")}
-    r = await client.post("/api/documents/", headers=auth_headers, files=files)
+    r = await _upload(client, auth_headers, "note.txt", b"hello world")
     assert r.status_code == 200
     body = r.json()
     assert body["file_name"] == "note.txt"
@@ -19,8 +27,7 @@ async def test_upload_document(client, auth_headers, mock_rag):
 
 
 async def test_upload_requires_auth(client):
-    files = {"file": ("note.txt", io.BytesIO(b"hello world"), "text/plain")}
-    r = await client.post("/api/documents/", files=files)
+    r = await _upload(client, None, "note.txt")
     assert r.status_code == 401
 
 
@@ -33,11 +40,7 @@ async def test_upload_filename_none_rejected():
 
 async def test_list_documents(client, auth_headers, mock_rag):
     for name in ("a.txt", "b.txt"):
-        r = await client.post(
-            "/api/documents/",
-            headers=auth_headers,
-            files={"file": (name, io.BytesIO(b"hello"), "text/plain")},
-        )
+        r = await _upload(client, auth_headers, name)
         assert r.status_code == 200
 
     r = await client.get("/api/documents/", headers=auth_headers)
@@ -51,11 +54,7 @@ async def test_list_documents(client, auth_headers, mock_rag):
 
 
 async def test_delete_document(client, auth_headers, mock_rag):
-    r = await client.post(
-        "/api/documents/",
-        headers=auth_headers,
-        files={"file": ("del.txt", io.BytesIO(b"hello"), "text/plain")},
-    )
+    r = await _upload(client, auth_headers, "del.txt")
     assert r.status_code == 200
     doc_id = r.json()["id"]
 

@@ -4,6 +4,7 @@ from backend.app.crud import (
     find_user_by_username,
     save_message,
 )
+from backend.tests.conftest import TEST_USERNAME
 
 
 async def test_list_conversations_empty(client, auth_headers):
@@ -14,7 +15,7 @@ async def test_list_conversations_empty(client, auth_headers):
 
 async def test_conversation_messages(client, auth_headers, session_factory):
     async with session_factory() as db:
-        user = await find_user_by_username(db, "tester")
+        user = await find_user_by_username(db, TEST_USERNAME)
         assert user is not None
         conv = await create_conversation(db, user.id, "first question")
         conv_id = conv.id
@@ -33,15 +34,13 @@ async def test_conversation_messages(client, auth_headers, session_factory):
     assert body[1]["content"] == "first answer"
 
 
-async def test_conversation_isolation(client, auth_headers, session_factory):
+async def test_conversation_isolation(client, auth_headers, auth_headers_for, session_factory):
     # 注册并登录另一个用户 B
-    await client.post("/api/auth/register", json={"username": "bob", "password": "secret123"})
-    r = await client.post("/api/auth/login", json={"username": "bob", "password": "secret123"})
-    bob_headers = {"Authorization": f"Bearer {r.json()['token']}"}
+    bob_headers = await auth_headers_for("bob")
 
     # 用户 A（tester）的私密会话 + 消息
     async with session_factory() as db:
-        user_a = await find_user_by_username(db, "tester")
+        user_a = await find_user_by_username(db, TEST_USERNAME)
         assert user_a is not None
         conv = await create_conversation(db, user_a.id, "private conversation")
         conv_id = conv.id
