@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, File, Query, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.crud import (
@@ -11,18 +11,16 @@ from backend.app.crud import (
     get_current_user,
     get_document,
     get_documents_list,
-    update_document_status,
 )
 from backend.app.db import get_db
 from backend.app.exceptions import BadRequestError, ConflictError, NotFoundError
 from backend.app.models import User
 from backend.app.models.document import DocumentStatus
-from backend.app.rag.pipeline import build
+from backend.app.rag.process_documents import process_documents
 from backend.app.schemas.document import DocumentOut
 from backend.app.services import (
     delete_collection,
     initializing_client,
-    parse_file,
 )
 from backend.app.services.bm25_retriever import invalidate
 
@@ -34,6 +32,7 @@ UPLOAD_DIR = "uploads"
 
 @router.post("/", response_model=DocumentOut)
 async def upload_documents(
+    background_task: BackgroundTasks,
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db, scope="function"),
     current_user: User = Depends(get_current_user),
@@ -41,7 +40,6 @@ async def upload_documents(
     file_name = file.filename
     if file_name is None:
         raise BadRequestError("File name is required")
-
     Path(UPLOAD_DIR).mkdir(exist_ok=True)
     file_path = Path(UPLOAD_DIR) / file_name
     existing = await find_document_by_file_name(db=db, file_name=file_name, user_id=current_user.id)
@@ -62,33 +60,8 @@ async def upload_documents(
     documents = await create_document(
         db, current_user.id, file_name, suffix, file_size=float(file.size or 0)
     )
-
-    await update_document_status(db=db, document_id=documents.id, status="parsing", commit=True)
-    try:
-        text = parse_file(str(file_path))
-        await build(
-            db=db,
-            text=text,
-            document_id=documents.id,
-            document_name=documents.file_name,
-            user_id=current_user.id,
-        )
-        await update_document_status(
-            db=db, document_id=documents.id, status=DocumentStatus.READY, commit=True
-        )
-
-        return documents
-    except Exception as e:
-        try:
-            await update_document_status(
-                db=db, document_id=documents.id, status=DocumentStatus.FAILED, commit=True
-            )
-            file_path.unlink(missing_ok=True)
-            if file_path.exists():
-                logger.warning(f"{file_path}删除失败，可能被占用：{e}")
-        except Exception as clean_err:
-            logger.error(f"失败清理自身出错: {clean_err}")
-        raise e
+    background_task.add_task(process_documents, documents.id, current_user.id, file_path)
+    return documents
 
 
 @router.get("/", response_model=list[DocumentOut])

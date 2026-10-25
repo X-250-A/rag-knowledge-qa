@@ -2,7 +2,7 @@
 import io
 
 import pytest
-from fastapi import UploadFile
+from fastapi import BackgroundTasks, UploadFile
 
 from backend.app.exceptions import BadRequestError
 from backend.app.routers.documents import upload_documents
@@ -23,7 +23,17 @@ async def test_upload_document(client, auth_headers, mock_rag):
     body = r.json()
     assert body["file_name"] == "note.txt"
     assert body["file_type"] == "txt"
-    assert body["status"] == "ready"
+    # 异步化后：上传立即返回，状态机由后台任务推进（httpx 会等 BackgroundTasks 跑完）
+    assert body["status"] in ("pending", "parsing")  # 返回时是初始态
+
+    # 后台任务跑完后文档应就绪（ASGITransport 等待 BackgroundTasks 完成）
+    docs_r = await client.get("/api/documents/", headers=auth_headers)
+    assert docs_r.status_code == 200
+    docs = docs_r.json()
+    assert len(docs) == 1
+    assert docs[0]["id"] == body["id"]
+    assert docs[0]["status"] == "ready"
+    assert docs[0]["chunk_count"] > 0
 
 
 async def test_upload_requires_auth(client):
@@ -34,7 +44,7 @@ async def test_upload_requires_auth(client):
 async def test_upload_filename_none_rejected():
     fake = UploadFile(file=io.BytesIO(b"hello world"), filename=None)
     with pytest.raises(BadRequestError) as exc_info:
-        await upload_documents(file=fake)
+        await upload_documents(background_task=BackgroundTasks(), file=fake)
     assert exc_info.value.status_code == 400
 
 

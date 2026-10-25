@@ -1,10 +1,9 @@
+import asyncio
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.config import CHUNK_OVERLAP, CHUNK_SIZE
-from backend.app.crud import (
-    create_chunk,
-    update_document_status,
-)
+from backend.app.crud import create_chunk, get_document, update_document_status
 from backend.app.models.document import DocumentStatus
 from backend.app.services import (
     add_collection,
@@ -39,9 +38,13 @@ async def build(db: AsyncSession, text: str, document_id: int, document_name: st
         await update_document_status(
             db=db, document_id=document_id, status=DocumentStatus.EMBEDDING, commit=True
         )
-        embedding = get_embedding(chunks)
-        client = initializing_client()
-        add_collection(
+        embedding = await asyncio.to_thread(get_embedding, chunks)
+        client = await asyncio.to_thread(initializing_client)
+        document = await get_document(db, document_id)
+        if document is None:
+            raise RuntimeError("document 已被删除，中止 chroma 写入")
+        await asyncio.to_thread(
+            add_collection,
             client,
             chunks,
             embedding,

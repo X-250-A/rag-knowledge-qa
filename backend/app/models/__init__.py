@@ -4,8 +4,8 @@
 from backend.app.models.base import Base
 from backend.app.models.chunk import Chunk
 from backend.app.models.conversation import Conversation
-from backend.app.models.document import Documents
+from backend.app.models.document import Documents, DocumentStatus
 from backend.app.models.messages import Message
 from backend.app.models.user import User
 
-__all__ = ["Base", "User", "Documents", "Chunk", "Conversation", "Message"]
+__all__ = ["Base", "User", "Documents", "Chunk", "Conversation", "Message", "DocumentStatus"]

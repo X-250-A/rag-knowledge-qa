@@ -85,13 +85,16 @@ async def auth_headers(auth_headers_for):
 
 
 @pytest.fixture
-def mock_rag(monkeypatch):
+def mock_rag(monkeypatch, session_factory):
     # 在 app 层把解析/embedding/向量库等重依赖替换掉，
-    # 不调真实模型、不连真实 chroma（上传/删除链路都会用到）。
+    # 不调真实模型、不连真实 chroma（上传链路：路由→后台任务 process_documents→build）。
     import backend.app.rag.pipeline as pipeline
+    import backend.app.rag.process_documents as process_documents
     import backend.app.routers.documents as documents
 
-    monkeypatch.setattr(documents, "parse_file", lambda path: "hello world")
+    # 后台任务在请求上下文外自建 session——必须指到测试内存库，否则连真实开发库
+    monkeypatch.setattr(process_documents, "AsyncSessionLocal", session_factory)
+    monkeypatch.setattr(process_documents, "parse_file", lambda path: "hello world")
     monkeypatch.setattr(documents, "initializing_client", lambda: object())
     monkeypatch.setattr(documents, "delete_collection", lambda *args, **kwargs: None)
     # 形状对齐真实签名（bge-m3 1024 维）：标量列表会让未来接真断言的测试假阳性
