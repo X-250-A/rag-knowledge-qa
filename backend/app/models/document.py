@@ -1,7 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Float, ForeignKey, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.app.models.base import Base
+
+if TYPE_CHECKING:
+    from backend.app.models.chunk import Chunk
 
 
 class DocumentStatus:
@@ -26,3 +33,8 @@ class Documents(Base):
         comment="状态机：pending/parsing/chunking/embedding/ready/failed",
     )
     chunk_count: Mapped[int] = mapped_column(Integer, default=0, comment="向量块数量")
+
+    # 级联删除：删文档时连带删其 chunks（ORM 层 cascade，不依赖 SQLite 外键 PRAGMA）
+    chunks: Mapped[list[Chunk]] = relationship(
+        "Chunk", back_populates="document", cascade="all, delete-orphan"
+    )

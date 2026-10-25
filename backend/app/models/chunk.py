@@ -1,7 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import JSON, ForeignKey, Integer, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.app.models import Base
+
+if TYPE_CHECKING:
+    from backend.app.models.document import Documents
 
 
 class Chunk(Base):
@@ -14,3 +21,5 @@ class Chunk(Base):
     seq_no: Mapped[int] = mapped_column(Integer, comment="块序号（引用定位用）")
     char_count: Mapped[int] = mapped_column(Integer, comment="文本字符数")
     metadata_json: Mapped[dict] = mapped_column(JSON, comment="切块方法元数据，如策略/重叠字数等")
+
+    document: Mapped[Documents] = relationship(back_populates="chunks")
